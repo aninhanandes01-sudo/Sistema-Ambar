@@ -12,7 +12,8 @@ CREATE TABLE funcionario (
     email VARCHAR(150) NOT NULL UNIQUE,
     telefone VARCHAR(20),
     cargo VARCHAR(50),
-    
+    senha VARCHAR(255)
+);
 
 CREATE TABLE servico (
     id_servico SERIAL PRIMARY KEY,

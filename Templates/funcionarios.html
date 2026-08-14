@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funcionários</title>
+</head>
+
+<body>
+
+    <h1>Funcionários</h1>
+
+    <a href="/novo-funcionario">
+        <button>Novo Funcionário</button>
+    </a>
+
+    <br><br>
+
+    {% for funcionario in funcionarios %}
+        <p>
+            {{ funcionario[1] }} -
+            {{ funcionario[2] }} -
+            {{ funcionario[3] }} -
+            {{ funcionario[4] }}
+        </p>
+    {% endfor %}
+
+    <br>
+
+    <a href="/">Voltar</a>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Clientes</title>
+</head>
+
+<body>
+
+    <h1>Clientes</h1>
+
+    <p>Lista de clientes cadastrados:</p>
+
+    {% for cliente in clientes %}
+        <p>
+            {{ cliente[1] }} - {{ cliente[2] }} - {{ cliente[4] }}
+        </p>
+    {% endfor %}
+<a href="/novo-cliente">
+    <button>Novo Cliente</button>
+</a>
+    <a href="/">Voltar</a>
+
+</body>
+</html>

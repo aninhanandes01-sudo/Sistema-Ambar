@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Âmbar</title>
+
+    <style>
+        body {
+            background: #004f4b;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+        }
+
+        .logo {
+            width: 100px;
+            margin-top: 30px;
+        }
+
+        h1 {
+            margin-top: 30px;
+        }
+
+        h1 span {
+            color: #f0a52b;
+        }
+
+        .menu {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px;
+}
+
+        .botao {
+    background: #003b39;
+    border: 1px solid #d99a2b;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-decoration: none;
+    width: 150px;
+}
+
+.botao:hover {
+    background: #d99a2b;
+    color: #003b39;
+}
+        .botao:hover {
+            background: #d99a2b;
+            color: #003b39;
+        }
+
+        .sair {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+
+    <h1>
+        Olá, <span>{{ session["usuario_nome"] }}</span>!
+    </h1>
+
+    <p>Bem-vindo ao Âmbar 🧡</p>
+
+    <div class="menu">
+
+        <a href="#" class="botao">
+            📅<br>
+            Agendar horário
+        </a>
+
+        <a href="#" class="botao">
+            🗓️<br>
+            Meus agendamentos
+        </a>
+
+        <a href="#" class="botao">
+            ✨<br>
+            Serviços
+        </a>
+
+        <a href="#" class="botao">
+            👤<br>
+            Meu perfil
+        </a>
+
+    </div>
+
+    <a href="/logout" class="sair">Sair</a>
+</body>
+
+</html>

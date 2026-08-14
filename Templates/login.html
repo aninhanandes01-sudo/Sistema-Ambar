@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Login - Âmbar</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            background: #004f4b;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .pagina {
+            width: 400px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .logo {
+            width: 250px;
+        }
+
+        .caixa {
+            background: #002f2d;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #d99a2b;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid #d99a2b;
+            background: #004f4b;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #ff9418;
+            color: #003b39;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #ffad3d;
+        }
+
+        a {
+            color: #ffad3d;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="pagina">
+
+        <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            class="logo"
+            alt="Logo Âmbar"
+        >
+
+        <h1>Bem-vindo ao Âmbar!</h1>
+
+        <p>Faça login para acessar sua conta.</p>
+
+        <div class="caixa">
+
+            <form method="POST" action="{{ url_for('login') }}">
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="E-mail"
+                    required
+                >
+
+                <input
+                    type="password"
+                    name="senha"
+                    placeholder="Senha"
+                    required
+                >
+
+                <button type="submit">
+                    Entrar
+                </button>
+
+            </form>
+
+            <p>
+                Ainda não tem uma conta?
+            </p>
+
+            <a href="/novo-cliente">
+                Cadastre-se
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
