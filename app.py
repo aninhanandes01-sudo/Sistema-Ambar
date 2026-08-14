@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 import psycopg
+import re
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -42,11 +43,24 @@ def clientes():
 def novo_cliente():
 
     if request.method == "POST":
-
         nome = request.form["nome"]
         email = request.form["email"]
-        senha = generate_password_hash(request.form["senha"])
-        telefone = request.form["telefone"]
+        senha = request.form["senha"]
+        telefone = re.sub(r"\D", "", request.form["telefone"])
+
+        if len(telefone) not in (10, 11):
+            return render_template(
+                "novo_cliente.html",
+                erro="Digite um telefone válido com DDD."
+            )
+
+        if len(set(telefone)) == 1:
+            return render_template(
+                "novo_cliente.html",
+                erro="Digite um telefone válido."
+            )
+
+        senha = generate_password_hash(senha)
 
         conn = conectar_banco()
 
@@ -65,7 +79,6 @@ def novo_cliente():
         return redirect("/login")
 
     return render_template("novo_cliente.html")
-
 
 @app.route("/funcionarios")
 def funcionarios():
