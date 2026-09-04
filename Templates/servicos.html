@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Serviços - Âmbar</title>
+
+    <style>
+        html {
+    scroll-behavior: smooth;
+}
+
+#servicos {
+    padding: 80px 20px;
+    margin-top: 50px;
+}
+
+.lista-servicos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1000px;
+    margin: 30px auto;
+}
+
+.servico {
+    background: #003b39;
+    border: 1px solid #d99a2b;
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.servico h3 {
+    color: #f0a52b;
+}
+
+@media (max-width: 700px) {
+
+    .lista-servicos {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #004f4b;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #003b39;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .logo {
+            width: 75px;
+        }
+
+        .sair {
+            color: white;
+            text-decoration: none;
+            padding: 10px 18px;
+            border: 1px solid #d99a2b;
+            border-radius: 20px;
+        }
+
+        .sair:hover {
+            background: #d99a2b;
+            color: #003b39;
+        }
+
+        .conteudo {
+            max-width: 1000px;
+            margin: 45px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        h1 span {
+            color: #f0a52b;
+        }
+
+        .subtitulo {
+            text-align: center;
+            color: #d9e8e6;
+            margin-bottom: 40px;
+        }
+
+        .servicos {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+
+        .servico {
+            background: #003b39;
+            border: 1px solid #d99a2b;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
+        }
+
+        .servico h2 {
+            margin-top: 0;
+            color: #f0a52b;
+            font-size: 21px;
+        }
+
+        .descricao {
+            color: #d9e8e6;
+            min-height: 45px;
+            line-height: 1.5;
+        }
+
+        .preco {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .agendar {
+            display: inline-block;
+            padding: 10px 18px;
+            background: #d99a2b;
+            color: #003b39;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .agendar:hover {
+            background: #f0a52b;
+        }
+
+        .voltar {
+            display: block;
+            width: fit-content;
+            margin: 40px auto 0;
+            color: white;
+            text-decoration: none;
+        }
+
+        .vazio {
+            text-align: center;
+            color: #d9e8e6;
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 650px) {
+
+            .topo {
+                padding: 15px 20px;
+            }
+
+            .servicos {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 27px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="topo">
+
+        <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            class="logo"
+        >
+
+        <a href="/logout" class="sair">
+            Sair
+        </a>
+
+    </div>
+
+
+    <div class="conteudo">
+
+        <h1>
+            Nossos <span>Serviços</span>
+        </h1>
+
+        <p class="subtitulo">
+            Confira os serviços disponíveis no Âmbar
+        </p>
+
+
+        <div class="servicos">
+
+            {% for servico in servicos %}
+
+                <div class="servico">
+
+                    <h2>
+                        {{ servico[1] }}
+                    </h2>
+
+                    <div class="descricao">
+                        {{ servico[2] }}
+                    </div>
+
+                    <div class="preco">
+                        R$ {{ "%.2f"|format(servico[3]) }}
+                    </div>
+
+                    <a
+                        href="{{ url_for('agendamentos') }}"
+                        class="agendar"
+                    >
+                        Agendar
+                    </a>
+
+                </div>
+
+            {% else %}
+
+                <div class="vazio">
+                    Nenhum serviço disponível no momento.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <a href="/painel" class="voltar">
+            ← Voltar para o painel
+        </a>
+
+
+    </div>
+
+</body>
+
+</html>
+

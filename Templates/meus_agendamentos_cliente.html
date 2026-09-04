@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Meus Agendamentos - Âmbar</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            background: #075040;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 40px;
+            background: #003b39;
+        }
+
+        .logo {
+            width: 70px;
+        }
+
+        .sair {
+            color: white;
+            text-decoration: none;
+            border: 1px solid #d99a2b;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .conteudo {
+            max-width: 700px;
+            margin: 45px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        h1 span {
+            color: #f0a52b;
+        }
+
+        .agendamento {
+            background: #003b39;
+            border: 1px solid #d99a2b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .agendamento strong {
+            color: #f0a52b;
+        }
+
+        .vazio {
+            text-align: center;
+            color: #d9e8e6;
+        }
+
+        .voltar {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="topo">
+
+        <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            class="logo"
+        >
+
+        <a href="/logout" class="sair">
+            Sair
+        </a>
+
+    </div>
+
+
+    <div class="conteudo">
+
+        <h1>
+            Meus <span>agendamentos</span>
+        </h1>
+
+
+        {% for agendamento in agendamentos %}
+
+            <div class="agendamento">
+
+                <strong>📅 Data:</strong>
+                {{ agendamento[0] }}
+
+                <br><br>
+
+                <strong>🕐 Horário:</strong>
+                {{ agendamento[1] }}
+
+                <br><br>
+
+                <strong>👩‍💼 Profissional:</strong>
+                {{ agendamento[2] }}
+
+                <br><br>
+
+                <strong>💅 Serviço:</strong>
+                {{ agendamento[3] }}
+
+                <br><br>
+
+                <strong>Status:</strong>
+                {{ agendamento[4] }}
+
+            </div>
+
+        {% else %}
+
+            <p class="vazio">
+                Você ainda não possui agendamentos.
+            </p>
+
+        {% endfor %}
+
+
+        <a href="/painel" class="voltar">
+            ← Voltar para o painel
+        </a>
+
+    </div>
+
+</body>
+
+</html>
+

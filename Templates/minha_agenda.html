@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Minha Agenda - Âmbar</title>
+
+    <style>
+        body {
+            background-color: #075040;
+            color: white;
+            font-family: Arial;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        form {
+            background-color: #053b2b;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: goldenrod;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .horario {
+            background-color: #053b2b;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        a {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Minha Agenda</h1>
+
+    <p>Cadastre os dias e horários em que você estará disponível.</p>
+
+    <form method="POST">
+
+        <label>Data:</label>
+        <input type="date" name="data" required>
+
+        <label>Horário de início:</label>
+        <input type="time" name="horario_inicio" required>
+
+        <label>Horário de término:</label>
+        <input type="time" name="horario_fim" required>
+
+        <button type="submit">Adicionar horário</button>
+
+    </form>
+
+    <h2>Meus horários</h2>
+
+    {% for horario in horarios %}
+
+        <div class="horario">
+            <strong>Data:</strong> {{ horario[1] }}<br>
+            <strong>Horário:</strong> {{ horario[2] }} às {{ horario[3] }}
+        </div>
+
+    {% endfor %}
+
+    <br>
+
+    <a href="/">← Voltar</a>
+
+</div>
+
+</body>
+
+</html>
