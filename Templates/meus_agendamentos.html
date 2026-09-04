@@ -63,6 +63,41 @@
             color: #f0a52b;
         }
 
+        .servicos {
+            margin-top: 8px;
+        }
+
+        .servico {
+            margin-bottom: 5px;
+        }
+
+        .valor {
+            font-size: 18px;
+            font-weight: bold;
+            color: #f0a52b;
+        }
+
+        .pago {
+            color: #7ee787;
+            font-weight: bold;
+        }
+
+        .pendente {
+            color: #ffcc66;
+            font-weight: bold;
+        }
+
+        .botao-pagar {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 18px;
+            background: #d99a2b;
+            color: #003b39;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
         .vazio {
             text-align: center;
             color: #d9e8e6;
@@ -108,27 +143,73 @@
             <div class="agendamento">
 
                 <strong>📅 Data:</strong>
-                {{ agendamento[0] }}
-
-                <br><br>
-
-                <strong>🕐 Horário:</strong>
                 {{ agendamento[1] }}
 
                 <br><br>
 
-                <strong>👤 Cliente:</strong>
+                <strong>🕐 Horário:</strong>
                 {{ agendamento[2] }}
 
                 <br><br>
 
-                <strong>💅 Serviço:</strong>
+                <strong>👤 Cliente:</strong>
                 {{ agendamento[3] }}
 
                 <br><br>
 
-                <strong>Status:</strong>
-                {{ agendamento[4] }}
+                <strong>💅 Serviços:</strong>
+
+                <div class="servicos">
+
+                    {% for servico in agendamento[4] %}
+
+                        <div class="servico">
+                            • {{ servico }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+                <br>
+
+                <strong>💰 Valor total:</strong>
+
+                <span class="valor">
+                    R$ {{ "%.2f"|format(agendamento[5]) }}
+                </span>
+
+                <br><br>
+
+                <strong>Status do agendamento:</strong>
+                {{ agendamento[6] }}
+
+                <br><br>
+
+                <strong>Pagamento:</strong>
+
+                {% if agendamento[7] == "PAGO" %}
+
+                    <span class="pago">
+                        ✓ PAGO
+                    </span>
+
+                {% else %}
+
+                    <span class="pendente">
+                        PENDENTE
+                    </span>
+
+                    <br>
+
+                    <a
+                        href="/marcar-pago/{{ agendamento[0] }}"
+                        class="botao-pagar"
+                    >
+                        Marcar como pago
+                    </a>
+
+                {% endif %}
 
             </div>
 
@@ -150,4 +231,3 @@
 </body>
 
 </html>
-

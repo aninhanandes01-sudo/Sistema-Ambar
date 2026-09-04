@@ -228,7 +228,6 @@ def servicos():
 @app.route("/agendamentos", methods=["GET", "POST"])
 def agendamentos():
 
-    
     if "usuario_nome" not in session:
         return redirect("/login")
 
@@ -240,15 +239,33 @@ def agendamentos():
         horario = request.form["horario"]
         id_cliente = session["usuario_id"]
         id_funcionario = request.form["id_funcionario"]
-        id_servico = request.form["id_servico"]
+
+        # Pega todos os serviços selecionados
+        id_servicos = request.form.getlist("id_servico")
+
+        # Converte os IDs para números
+        id_servicos = [int(id) for id in id_servicos]
 
         with conn.cursor() as cursor:
 
+            # Calcula o valor total dos serviços
+            cursor.execute(
+                """
+                SELECT SUM(preco)
+                FROM servico
+                WHERE id_servico = ANY(%s)
+                """,
+                (id_servicos,)
+            )
+
+            valor_total = cursor.fetchone()[0]
+
+            # Cria o agendamento
             cursor.execute(
                 """
                 INSERT INTO agendamento
-                (data, horario, id_cliente, id_funcionario, status)
-                VALUES (%s, %s, %s, %s, %s)
+                (data, horario, id_cliente, id_funcionario, status, valor_total)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 RETURNING id_agendamento
                 """,
                 (
@@ -256,20 +273,24 @@ def agendamentos():
                     horario,
                     id_cliente,
                     id_funcionario,
-                    "PENDENTE"
+                    "PENDENTE",
+                    valor_total
                 )
             )
 
             id_agendamento = cursor.fetchone()[0]
 
-            cursor.execute(
-                """
-                INSERT INTO agendamento_servico
-                (id_agendamento, id_servico)
-                VALUES (%s, %s)
-                """,
-                (id_agendamento, id_servico)
-            )
+            # Salva todos os serviços escolhidos
+            for id_servico in id_servicos:
+
+                cursor.execute(
+                    """
+                    INSERT INTO agendamento_servico
+                    (id_agendamento, id_servico)
+                    VALUES (%s, %s)
+                    """,
+                    (id_agendamento, id_servico)
+                )
 
         conn.commit()
 
@@ -299,7 +320,8 @@ def agendamentos():
                 s.nome,
                 a.data,
                 a.horario,
-                a.status
+                a.status,
+                a.valor_total
             FROM agendamento a
             JOIN cliente c
                 ON a.id_cliente = c.id_cliente
@@ -326,6 +348,7 @@ def agendamentos():
     )
 
 @app.route("/disponibilidade/<int:id_funcionario>")
+
 def buscar_disponibilidade(id_funcionario):
 
     conn = conectar_banco()
@@ -352,6 +375,7 @@ def buscar_disponibilidade(id_funcionario):
         })
 
     return resultado
+
 @app.route("/horarios-disponiveis/<int:id_funcionario>/<data>")
 def horarios_disponiveis(id_funcionario, data):
 
@@ -473,11 +497,15 @@ def meus_agendamentos():
 
         cursor.execute("""
             SELECT
+                a.id_agendamento,
                 a.data,
                 a.horario,
                 c.nome,
                 s.nome,
-                a.status
+                a.valor_total,
+                a.status,
+                a.pagamento_status,
+                a.data_pagamento
             FROM agendamento a
 
             JOIN cliente c
@@ -494,14 +522,87 @@ def meus_agendamentos():
             ORDER BY a.data, a.horario
         """, (id_funcionario,))
 
-        agendamentos = cursor.fetchall()
+        resultados = cursor.fetchall()
 
     conn.close()
+
+    agendamentos = []
+
+    for resultado in resultados:
+
+        id_agendamento = resultado[0]
+
+        existente = None
+
+        for agendamento in agendamentos:
+            if agendamento[0] == id_agendamento:
+                existente = agendamento
+                break
+
+        if existente:
+            existente[4].append(resultado[4])
+
+        else:
+            agendamentos.append([
+                resultado[0],  # id
+                resultado[1],  # data
+                resultado[2],  # horario
+                resultado[3],  # cliente
+                [resultado[4]],  # serviços
+                resultado[5],  # valor total
+                resultado[6],  # status
+                resultado[7],  # pagamento
+                resultado[8]   # data pagamento
+            ])
 
     return render_template(
         "meus_agendamentos.html",
         agendamentos=agendamentos
     )
+
+@app.route("/marcar-pago/<int:id_agendamento>")
+def marcar_pago(id_agendamento):
+
+    if "usuario_id" not in session:
+        return redirect("/login")
+
+    conn = conectar_banco()
+
+    with conn.cursor() as cursor:
+
+        cursor.execute("""
+            SELECT valor_total
+            FROM agendamento
+            WHERE id_agendamento = %s
+              AND id_funcionario = %s
+        """, (
+            id_agendamento,
+            session["usuario_id"]
+        ))
+
+        resultado = cursor.fetchone()
+
+        if resultado:
+
+            valor_total = resultado[0]
+
+            cursor.execute("""
+                UPDATE agendamento
+                SET pagamento_status = 'PAGO',
+                    data_pagamento = CURRENT_TIMESTAMP,
+                    valor_total = %s
+                WHERE id_agendamento = %s
+                  AND id_funcionario = %s
+            """, (
+                valor_total,
+                id_agendamento,
+                session["usuario_id"]
+            ))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/meus-agendamentos")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

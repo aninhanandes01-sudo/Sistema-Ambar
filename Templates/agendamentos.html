@@ -85,6 +85,25 @@
             font-size: 15px;
         }
 
+        .servicos {
+            min-height: 120px;
+        }
+
+        .total {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 9px;
+            background: #075040;
+            border: 1px solid #d99a2b;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .total span {
+            color: #f0a52b;
+        }
+
         button {
             width: 100%;
             margin-top: 25px;
@@ -129,7 +148,7 @@
         <h1>Agende seu <span>horário</span></h1>
 
         <p class="subtitulo">
-            Escolha o serviço, profissional, data e horário.
+            Escolha os serviços, profissional, data e horário.
         </p>
 
 
@@ -137,19 +156,28 @@
 
             <form method="POST">
 
-                <label>💅 Serviço</label>
+                <label>💅 Serviços</label>
 
-                <select name="id_servico" required>
-
-                    <option value="">Selecione o serviço</option>
+                <select name="id_servico" id="servicos" class="servicos" multiple required>
 
                     {% for servico in servicos %}
-                        <option value="{{ servico[0] }}">
+
+                        <option value="{{ servico[0] }}" data-preco="{{ servico[3] }}">
                             {{ servico[1] }} - R$ {{ "%.2f"|format(servico[3]) }}
                         </option>
+
                     {% endfor %}
 
                 </select>
+
+                <small>
+                    Segure CTRL para selecionar mais de um serviço.
+                </small>
+
+
+                <div class="total">
+                    Total: R$ <span id="valor-total">0,00</span>
+                </div>
 
 
                 <label>👩‍💼 Profissional</label>
@@ -159,9 +187,11 @@
                     <option value="">Selecione o profissional</option>
 
                     {% for funcionario in funcionarios %}
+
                         <option value="{{ funcionario[0] }}">
                             {{ funcionario[1] }}
                         </option>
+
                     {% endfor %}
 
                 </select>
@@ -207,6 +237,24 @@
 
     <script>
 
+        const servicos = document.getElementById("servicos");
+        const valorTotal = document.getElementById("valor-total");
+
+        servicos.addEventListener("change", function () {
+
+            let total = 0;
+
+            Array.from(this.selectedOptions).forEach(option => {
+
+                total += parseFloat(option.dataset.preco);
+
+            });
+
+            valorTotal.textContent = total.toFixed(2).replace(".", ",");
+
+        });
+
+
         const funcionario = document.getElementById("funcionario");
         const data = document.getElementById("data");
         const horario = document.getElementById("horario");
@@ -224,11 +272,14 @@
                     data.innerHTML = "<option value=''>Selecione a data</option>";
 
                     dados.forEach(d => {
+
                         data.innerHTML +=
                             `<option value="${d.data}">${d.data}</option>`;
+
                     });
 
                 });
+
         };
 
 
@@ -240,21 +291,23 @@
                 .then(r => r.json())
                 .then(dados => {
 
-                    horario.innerHTML = "<option value=''>Selecione o horário</option>";
+                    horario.innerHTML =
+                        "<option value=''>Selecione o horário</option>";
 
                     dados.forEach(h => {
+
                         horario.innerHTML +=
                             `<option value="${h}">${h}</option>`;
+
                     });
 
                 });
+
         };
 
     </script>
 
 </body>
 
-</html>.
-
-
+</html>
 
