@@ -393,12 +393,13 @@ def horarios_disponiveis(id_funcionario, data):
     disponibilidades = cursor.fetchall()
 
     cursor.execute("""
-        SELECT horario
-        FROM agendamento
-        WHERE id_funcionario = %s
-          AND data = %s
-    """, (id_funcionario, data))
-
+    SELECT horario
+    FROM agendamento
+    WHERE id_funcionario = %s
+      AND data = %s
+      AND status != 'CANCELADO'
+""", (id_funcionario, data))
+    
     agendados = cursor.fetchall()
 
     cursor.close()
@@ -451,11 +452,14 @@ def meus_agendamentos_cliente():
 
         cursor.execute("""
             SELECT
+                a.id_agendamento,
                 a.data,
                 a.horario,
                 f.nome,
                 s.nome,
-                a.status
+                a.valor_total,
+                a.status,
+                a.pagamento_status
             FROM agendamento a
 
             JOIN funcionario f
@@ -472,16 +476,70 @@ def meus_agendamentos_cliente():
             ORDER BY a.data, a.horario
         """, (id_cliente,))
 
-        agendamentos = cursor.fetchall()
+        resultados = cursor.fetchall()
 
     conn.close()
+
+    agendamentos = []
+
+    for resultado in resultados:
+
+        id_agendamento = resultado[0]
+
+        existente = None
+
+        for agendamento in agendamentos:
+
+            if agendamento[0] == id_agendamento:
+                existente = agendamento
+                break
+
+        if existente:
+
+            existente[4].append(resultado[4])
+
+        else:
+
+            agendamentos.append([
+                resultado[0],       # id_agendamento
+                resultado[1],       # data
+                resultado[2],       # horario
+                resultado[3],       # funcionario
+                [resultado[4]],     # serviços
+                resultado[5],       # valor total
+                resultado[6],       # status
+                resultado[7]        # pagamento
+            ])
 
     return render_template(
         "meus_agendamentos_cliente.html",
         agendamentos=agendamentos
     )
 
+@app.route("/cancelar-agendamento/<int:id_agendamento>")
+def cancelar_agendamento(id_agendamento):
 
+    if "usuario_id" not in session:
+        return redirect("/login")
+
+    conn = conectar_banco()
+
+    with conn.cursor() as cursor:
+
+        cursor.execute("""
+            UPDATE agendamento
+            SET status = 'CANCELADO'
+            WHERE id_agendamento = %s
+              AND id_cliente = %s
+        """, (
+            id_agendamento,
+            session["usuario_id"]
+        ))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/meus-agendamentos-cliente")
 # AGENDAMENTOS DO FUNCIONÁRIO
 @app.route("/meus-agendamentos")
 def meus_agendamentos():
