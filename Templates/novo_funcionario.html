@@ -5,7 +5,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novo Funcionário</title>
 </head>
+<style>
 
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: rgb(5, 109, 95);
+            font-family: Arial, sans-serif;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-top: 60px;
+            margin-bottom: 5px;
+
+            font-family: Georgia, Times, serif;
+            color: white;
+            font-size: 38px;
+        }
+
+        .subtitulo {
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .caixa {
+            width: 420px;
+            max-width: 90%;
+
+            background: #002f2d;
+            padding: 30px;
+
+            border-radius: 15px;
+            border: 1px solid #d99a2b;
+
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        label {
+            display: block;
+
+            color: white;
+            font-weight: bold;
+
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 12px;
+
+            margin-bottom: 18px;
+
+            border-radius: 8px;
+            border: 1px solid #d99a2b;
+
+            background: #004f4b;
+            color: white;
+
+            font-size: 15px;
+        }
+
+        input::placeholder {
+            color: #cccccc;
+        }
+
+        input:focus {
+            outline: none;
+            border: 2px solid #ff9418;
+        }
+
+        button {
+            width: 100%;
+
+            padding: 12px;
+            margin-top: 5px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #ff9418;
+            color: #003b39;
+
+            font-weight: bold;
+            font-size: 16px;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #d99a2b;
+        }
+
+        
+
+        .voltar {
+            display: block;
+
+            margin-top: 20px;
+
+            text-align: center;
+
+            color: white;
+            text-decoration: none;
+        }
+
+        .voltar:hover {
+            color: #ff9418;
+        }
+
+    </style>
 <body>
 
     <h1>Novo Funcionário</h1>
@@ -15,17 +134,21 @@
         <label>Nome:</label><br>
         <input type="text" name="nome" required><br><br>
 
+        <label>Cargo:</label><br>
+        <input type="text" name="cargo" required><br><br>
+
         <label>E-mail:</label><br>
         <input type="email" name="email" required><br><br>
-
-        <label>Senha:</label><br>
-        <input type="password" name="senha" required><br><br>
 
         <label>Telefone:</label><br>
         <input type="text" name="telefone"><br><br>
 
-        <label>Cargo:</label><br>
-        <input type="text" name="cargo" required><br><br>
+        <label>Senha:</label><br>
+        <input type="password" name="senha" required><br><br>
+
+        
+
+        
 
         <button type="submit">Cadastrar</button>
 

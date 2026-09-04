@@ -13,15 +13,16 @@ def conectar_banco():
     )
 
 
-@app.route("/")
-def inicio():
-    return render_template("index.html")
 
 
 @app.route("/painel")
 def painel():
+
     if "usuario_id" not in session:
         return redirect("/login")
+
+    if session["tipo_usuario"] == "funcionario":
+        return render_template("painel_funcionario.html")
 
     return render_template("painel.html")
 
@@ -31,22 +32,30 @@ def clientes():
     conn = conectar_banco()
 
     with conn.cursor() as cursor:
-        cursor.execute("SELECT * FROM cliente ORDER BY id_cliente")
+        cursor.execute(
+            "SELECT * FROM cliente ORDER BY id_cliente"
+        )
         clientes = cursor.fetchall()
 
     conn.close()
 
-    return render_template("clientes.html", clientes=clientes)
+    return render_template(
+        "clientes.html",
+        clientes=clientes
+    )
 
 
 @app.route("/novo-cliente", methods=["GET", "POST"])
 def novo_cliente():
 
     if request.method == "POST":
+
         nome = request.form["nome"]
         email = request.form["email"]
         senha = request.form["senha"]
-        telefone = re.sub(r"\D", "", request.form["telefone"])
+        telefone = re.sub(
+            r"\D", "", request.form["telefone"]
+        )
 
         if len(telefone) not in (10, 11):
             return render_template(
@@ -67,7 +76,8 @@ def novo_cliente():
         with conn.cursor() as cursor:
             cursor.execute(
                 """
-                INSERT INTO cliente (nome, email, senha, telefone)
+                INSERT INTO cliente
+                (nome, email, senha, telefone)
                 VALUES (%s, %s, %s, %s)
                 """,
                 (nome, email, senha, telefone)
@@ -79,6 +89,7 @@ def novo_cliente():
         return redirect("/login")
 
     return render_template("novo_cliente.html")
+
 
 @app.route("/funcionarios")
 def funcionarios():
@@ -97,6 +108,43 @@ def funcionarios():
         "funcionarios.html",
         funcionarios=funcionarios
     )
+
+@app.route("/minha-agenda", methods=["GET", "POST"])
+def minha_agenda():
+
+    id_funcionario = session["usuario_id"]
+
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+
+        cursor.execute("""
+            INSERT INTO disponibilidade
+            (id_funcionario, data, horario_inicio, horario_fim)
+            VALUES (%s, %s, %s, %s)
+        """, (
+            id_funcionario,
+            request.form["data"],
+            request.form["horario_inicio"],
+            request.form["horario_fim"]
+        ))
+
+        conn.commit()
+
+    cursor.execute("""
+        SELECT id_disponibilidade, data, horario_inicio, horario_fim
+        FROM disponibilidade
+        WHERE id_funcionario = %s
+        ORDER BY data, horario_inicio
+    """, (id_funcionario,))
+
+    horarios = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template("minha_agenda.html", horarios=horarios)
 
 
 @app.route("/novo-funcionario", methods=["GET", "POST"])
@@ -127,8 +175,333 @@ def novo_funcionario():
 
         return redirect("/login")
 
-    return render_template("login.html")
+    return render_template("novo_funcionario.html")
 
+
+@app.route("/")
+def index():
+
+    
+
+    conn = conectar_banco()
+
+    with conn.cursor() as cursor:
+
+        cursor.execute("""
+            SELECT id_servico, nome, descricao, preco
+            FROM servico
+            ORDER BY nome
+        """)
+
+        servicos = cursor.fetchall()
+
+        print("SERVIÇOS ENCONTRADOS:", servicos)
+
+    conn.close()
+
+    return render_template(
+        "index.html",
+        servicos=servicos
+    )
+@app.route("/servicos")
+def servicos():
+
+    conn = conectar_banco()
+
+    with conn.cursor() as cursor:
+
+        cursor.execute("""
+            SELECT id_servico, nome, descricao, preco
+            FROM servico
+            ORDER BY nome
+        """)
+
+        servicos = cursor.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "servicos.html",
+        servicos=servicos
+    )
+# AGENDAMENTOS
+@app.route("/agendamentos", methods=["GET", "POST"])
+def agendamentos():
+
+    
+    if "usuario_nome" not in session:
+        return redirect("/login")
+
+    conn = conectar_banco()
+
+    if request.method == "POST":
+
+        data = request.form["data"]
+        horario = request.form["horario"]
+        id_cliente = session["usuario_id"]
+        id_funcionario = request.form["id_funcionario"]
+        id_servico = request.form["id_servico"]
+
+        with conn.cursor() as cursor:
+
+            cursor.execute(
+                """
+                INSERT INTO agendamento
+                (data, horario, id_cliente, id_funcionario, status)
+                VALUES (%s, %s, %s, %s, %s)
+                RETURNING id_agendamento
+                """,
+                (
+                    data,
+                    horario,
+                    id_cliente,
+                    id_funcionario,
+                    "PENDENTE"
+                )
+            )
+
+            id_agendamento = cursor.fetchone()[0]
+
+            cursor.execute(
+                """
+                INSERT INTO agendamento_servico
+                (id_agendamento, id_servico)
+                VALUES (%s, %s)
+                """,
+                (id_agendamento, id_servico)
+            )
+
+        conn.commit()
+
+    with conn.cursor() as cursor:
+
+        cursor.execute(
+            "SELECT id_cliente, nome FROM cliente ORDER BY nome"
+        )
+        clientes = cursor.fetchall()
+
+        cursor.execute(
+            "SELECT id_funcionario, nome FROM funcionario ORDER BY nome"
+        )
+        funcionarios = cursor.fetchall()
+
+        cursor.execute(
+            "SELECT * FROM servico ORDER BY nome"
+        )
+        servicos = cursor.fetchall()
+
+        cursor.execute(
+            """
+            SELECT
+                a.id_agendamento,
+                c.nome,
+                f.nome,
+                s.nome,
+                a.data,
+                a.horario,
+                a.status
+            FROM agendamento a
+            JOIN cliente c
+                ON a.id_cliente = c.id_cliente
+            JOIN funcionario f
+                ON a.id_funcionario = f.id_funcionario
+            JOIN agendamento_servico ags
+                ON a.id_agendamento = ags.id_agendamento
+            JOIN servico s
+                ON ags.id_servico = s.id_servico
+            ORDER BY a.data, a.horario
+            """
+        )
+
+        agendamentos = cursor.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "agendamentos.html",
+        clientes=clientes,
+        funcionarios=funcionarios,
+        servicos=servicos,
+        agendamentos=agendamentos
+    )
+
+@app.route("/disponibilidade/<int:id_funcionario>")
+def buscar_disponibilidade(id_funcionario):
+
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT DISTINCT data
+        FROM disponibilidade
+        WHERE id_funcionario = %s
+          AND data >= CURRENT_DATE
+        ORDER BY data
+    """, (id_funcionario,))
+
+    disponibilidades = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    resultado = []
+
+    for disponibilidade in disponibilidades:
+        resultado.append({
+            "data": disponibilidade[0].strftime("%Y-%m-%d")
+        })
+
+    return resultado
+@app.route("/horarios-disponiveis/<int:id_funcionario>/<data>")
+def horarios_disponiveis(id_funcionario, data):
+
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT horario_inicio, horario_fim
+        FROM disponibilidade
+        WHERE id_funcionario = %s
+          AND data = %s
+        ORDER BY horario_inicio
+    """, (id_funcionario, data))
+
+    disponibilidades = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT horario
+        FROM agendamento
+        WHERE id_funcionario = %s
+          AND data = %s
+    """, (id_funcionario, data))
+
+    agendados = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    horarios_agendados = {
+        horario[0].strftime("%H:%M")
+        for horario in agendados
+    }
+
+    horarios = []
+
+    for inicio, fim in disponibilidades:
+
+        hora = inicio.hour
+        minuto = inicio.minute
+
+        while True:
+
+            horario = f"{hora:02d}:{minuto:02d}"
+
+            if horario not in horarios_agendados:
+                horarios.append(horario)
+
+            minuto += 60
+
+            if minuto >= 60:
+                hora += minuto // 60
+                minuto = minuto % 60
+
+            if hora > fim.hour or (
+                hora == fim.hour and minuto >= fim.minute
+            ):
+                break
+
+    return horarios
+
+# AGENDAMENTOS DO CLIENTE
+@app.route("/meus-agendamentos-cliente")
+def meus_agendamentos_cliente():
+
+    if "usuario_id" not in session:
+        return redirect("/login")
+
+    id_cliente = session["usuario_id"]
+
+    conn = conectar_banco()
+
+    with conn.cursor() as cursor:
+
+        cursor.execute("""
+            SELECT
+                a.data,
+                a.horario,
+                f.nome,
+                s.nome,
+                a.status
+            FROM agendamento a
+
+            JOIN funcionario f
+                ON a.id_funcionario = f.id_funcionario
+
+            JOIN agendamento_servico ags
+                ON a.id_agendamento = ags.id_agendamento
+
+            JOIN servico s
+                ON ags.id_servico = s.id_servico
+
+            WHERE a.id_cliente = %s
+
+            ORDER BY a.data, a.horario
+        """, (id_cliente,))
+
+        agendamentos = cursor.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "meus_agendamentos_cliente.html",
+        agendamentos=agendamentos
+    )
+
+
+# AGENDAMENTOS DO FUNCIONÁRIO
+@app.route("/meus-agendamentos")
+def meus_agendamentos():
+
+    if "usuario_id" not in session:
+        return redirect("/login")
+
+    id_funcionario = session["usuario_id"]
+
+    conn = conectar_banco()
+
+    with conn.cursor() as cursor:
+
+        cursor.execute("""
+            SELECT
+                a.data,
+                a.horario,
+                c.nome,
+                s.nome,
+                a.status
+            FROM agendamento a
+
+            JOIN cliente c
+                ON a.id_cliente = c.id_cliente
+
+            JOIN agendamento_servico ags
+                ON a.id_agendamento = ags.id_agendamento
+
+            JOIN servico s
+                ON ags.id_servico = s.id_servico
+
+            WHERE a.id_funcionario = %s
+
+            ORDER BY a.data, a.horario
+        """, (id_funcionario,))
+
+        agendamentos = cursor.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "meus_agendamentos.html",
+        agendamentos=agendamentos
+    )
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -143,13 +516,19 @@ def login():
         with conn.cursor() as cursor:
 
             cursor.execute(
-                "SELECT id_cliente, nome, senha FROM cliente WHERE email = %s",
+                """
+                SELECT id_cliente, nome, senha
+                FROM cliente
+                WHERE email = %s
+                """,
                 (email,)
             )
 
             usuario = cursor.fetchone()
 
-            if usuario and check_password_hash(usuario[2], senha):
+            if usuario and check_password_hash(
+                usuario[2], senha
+            ):
 
                 session["usuario_id"] = usuario[0]
                 session["usuario_nome"] = usuario[1]
@@ -160,13 +539,20 @@ def login():
                 return redirect("/painel")
 
             cursor.execute(
-                "SELECT id_funcionario, nome, senha FROM funcionario WHERE email = %s",
+                """
+                SELECT id_funcionario, nome, senha
+                FROM funcionario
+                WHERE email = %s
+                """,
                 (email,)
             )
 
             usuario = cursor.fetchone()
+            print("FUNCIONÁRIO:", usuario)
 
-            if usuario and check_password_hash(usuario[2], senha):
+            if usuario and check_password_hash(
+                usuario[2], senha
+            ):
 
                 session["usuario_id"] = usuario[0]
                 session["usuario_nome"] = usuario[1]
@@ -188,7 +574,7 @@ def logout():
 
     session.clear()
 
-    return redirect("/login")
+    return redirect("/")
 
 
 if __name__ == "__main__":

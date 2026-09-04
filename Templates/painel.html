@@ -1,98 +1,245 @@
 <!DOCTYPE html>
+
 <html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
-    <title>Âmbar</title>
+    <title>Âmbar - Painel</title>
 
-    <style>
-        body {
-            background: #004f4b;
-            color: white;
-            font-family: Arial;
-            text-align: center;
-        }
 
-        .logo {
-            width: 100px;
-            margin-top: 30px;
-        }
+<style>
 
-        h1 {
-            margin-top: 30px;
-        }
+    * {
+        box-sizing: border-box;
+    }
 
-        h1 span {
-            color: #f0a52b;
+    body {
+        margin: 0;
+        background: #004f4b;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+
+    /* CABEÇALHO */
+    .topo {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 50px;
+        background: #003b39;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+    }
+
+    .logo {
+        width: 75px;
+    }
+
+    .sair {
+        color: white;
+        text-decoration: none;
+        padding: 10px 18px;
+        border: 1px solid #d99a2b;
+        border-radius: 20px;
+        transition: 0.3s;
+    }
+
+    .sair:hover {
+        background: #d99a2b;
+        color: #003b39;
+    }
+
+    /* ÁREA PRINCIPAL */
+    .conteudo {
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 0 20px;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 32px;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+
+    h1 span {
+        color: #f0a52b;
+        text-align: center;
+    }
+
+    .subtitulo {
+        color: #d9e8e6;
+        margin-bottom: 45px;
+        font-size: 17px;
+        text-align: center;
+    }
+
+    /* MENU */
+    .menu {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+    }
+
+    .botao {
+        background: #003b39;
+        border: 1px solid #d99a2b;
+        color: white;
+        padding: 30px 20px;
+        border-radius: 15px;
+        text-decoration: none;
+        font-size: 17px;
+        transition: 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.18);
+    }
+
+    .botao:hover {
+        background: #d99a2b;
+        color: #003b39;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    }
+
+    .icone {
+        font-size: 35px;
+        margin-bottom: 12px;
+    }
+
+    .titulo-botao {
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .descricao {
+        font-size: 13px;
+        margin-top: 8px;
+        opacity: 0.8;
+    }
+
+    /* RODAPÉ */
+    .rodape {
+        margin-top: 55px;
+        color: #c7d9d7;
+        font-size: 13px;
+    }
+
+    /* CELULAR */
+    @media (max-width: 650px) {
+
+        .topo {
+            padding: 15px 20px;
         }
 
         .menu {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px;
-}
-
-        .botao {
-    background: #003b39;
-    border: 1px solid #d99a2b;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    text-decoration: none;
-    width: 150px;
-}
-
-.botao:hover {
-    background: #d99a2b;
-    color: #003b39;
-}
-        .botao:hover {
-            background: #d99a2b;
-            color: #003b39;
+            grid-template-columns: 1fr;
         }
 
-        .sair {
-            color: white;
+        h1 {
+            font-size: 26px;
         }
-    </style>
+    }
+
+</style>
+
+
 </head>
 
 <body>
 
+<div class="topo">
+
     <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+
+    <a href="/logout" class="sair">Sair</a>
+
+</div>
+
+
+<div class="conteudo">
 
     <h1>
         Olá, <span>{{ session["usuario_nome"] }}</span>!
     </h1>
 
-    <p>Bem-vindo ao Âmbar 🧡</p>
+    <p class="subtitulo">
+        Bem-vindo ao seu perfil Âmbar 🧡<br>
+        O que você deseja fazer hoje?
+    </p>
+
 
     <div class="menu">
 
-        <a href="#" class="botao">
-            📅<br>
-            Agendar horário
+       <a href="{{ url_for('agendamentos') }}" class="botao">
+
+    <div class="icone">📅</div>
+
+    <div class="titulo-botao">
+        Agendar horário
+    </div>
+
+    <div class="descricao">
+        Escolha seu serviço, profissional, data e horário
+    </div>
+
+</a>
+
+
+        <a href="/meus-agendamentos-cliente" class="botao">
+
+    <div class="icone">🗓️</div>
+
+    <div class="titulo-botao">
+        Meus agendamentos
+    </div>
+
+    <div class="descricao">
+        Consulte seus horários marcados
+    </div>
+
+</a>
         </a>
 
-        <a href="#" class="botao">
-            🗓️<br>
-            Meus agendamentos
+
+        <a href="{{ url_for('servicos') }}" class="botao">
+     
+        <div class="icone">✨</div>
+
+
+    <div class="titulo-botao">
+        Serviços
+    </div>
+
+            <div class="descricao">
+                Veja os serviços disponíveis
+            </div>
+
         </a>
 
-        <a href="#" class="botao">
-            ✨<br>
-            Serviços
-        </a>
 
         <a href="#" class="botao">
-            👤<br>
-            Meu perfil
+
+            <div class="icone">👤</div>
+
+            <div class="titulo-botao">
+                Meu perfil
+            </div>
+
+            <div class="descricao">
+                Consulte e edite seus dados
+            </div>
+
         </a>
 
     </div>
 
-    <a href="/logout" class="sair">Sair</a>
+
+    <div class="rodape">
+        Sistema Âmbar • Seu cuidado começa aqui ✨
+    </div>
+
+</div>
+```
+
 </body>
 
 </html>
