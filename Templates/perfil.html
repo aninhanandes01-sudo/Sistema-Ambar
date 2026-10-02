@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Perfil - Âmbar</title>
+
+    <style>
+
+        body {
+            background: #004f4b;
+            color: white;
+            font-family: Arial;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .perfil {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .campo {
+            margin-bottom: 20px;
+        }
+
+        .campo strong {
+            display: block;
+            color: #004f4b;
+            margin-bottom: 5px;
+        }
+
+        .voltar {
+            display: block;
+            width: fit-content;
+            margin: 25px auto 0;
+            padding: 10px 20px;
+            background: #d4af37;
+            color: #004f4b;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Meu Perfil</h1>
+
+        <div class="perfil">
+
+            <div class="campo">
+                <strong>Nome</strong>
+                {{ usuario[0] }}
+            </div>
+
+            <div class="campo">
+                <strong>E-mail</strong>
+                {{ usuario[1] }}
+            </div>
+
+            <div class="campo">
+                <strong>Telefone</strong>
+                {{ usuario[2] }}
+            </div>
+
+            {% if session["tipo_usuario"] == "funcionario" %}
+
+                <div class="campo">
+                    <strong>Cargo</strong>
+                    {{ usuario[3] }}
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <a href="/painel" class="voltar">
+            Voltar ao painel
+        </a>
+
+    </div>
+
+</body>
+
+</html>

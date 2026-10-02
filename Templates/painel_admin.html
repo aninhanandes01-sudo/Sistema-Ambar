@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Âmbar - Painel Administrativo</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #004f4b;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+}
+
+.logo {
+    width: 100px;
+}
+
+.topo-direita {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.perfil {
+    color: #d4af37;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.sair {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+        .conteudo {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        h1 span {
+            color: #f0a52b;
+        }
+
+        .subtitulo {
+            color: #d9e8e6;
+            margin-bottom: 45px;
+            font-size: 17px;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+
+        .botao {
+            background: #003b39;
+            border: 1px solid #d99a2b;
+            color: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-size: 17px;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
+        }
+
+        .botao:hover {
+            background: #d99a2b;
+            color: #003b39;
+            transform: translateY(-5px);
+        }
+
+        .icone {
+            font-size: 35px;
+            margin-bottom: 12px;
+        }
+
+        .titulo-botao {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .descricao {
+            font-size: 13px;
+            margin-top: 8px;
+            opacity: 0.8;
+        }
+
+        .rodape {
+            margin-top: 55px;
+            color: #c7d9d7;
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+
+            .topo {
+                padding: 15px 20px;
+            }
+
+            .menu {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+   <div class="topo">
+
+    <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+
+    <div class="topo-direita">
+
+    <a href="/perfil" class="perfil">
+        Perfil
+    </a>
+
+    <a href="/logout" class="sair">
+        Sair
+    </a>
+    </div>
+
+</div>
+
+
+    <div class="conteudo">
+
+        <h1>
+            Olá, <span>{{ session["usuario_nome"] }}</span>!
+        </h1>
+
+        <p class="subtitulo">
+            Bem-vindo ao painel administrativo Âmbar 🧡<br>
+            O que você deseja fazer hoje?
+        </p>
+
+
+        <div class="menu">
+
+            <a href="/minha-agenda" class="botao">
+
+                <div class="icone">📅</div>
+
+                <div class="titulo-botao">
+                    Minha agenda
+                </div>
+
+                <div class="descricao">
+                    Defina seus dias e horários disponíveis
+                </div>
+
+            </a>
+
+            <a href="/meus-agendamentos" class="botao">
+
+                <div class="icone">🗓️</div>
+
+                <div class="titulo-botao">
+                    Meus agendamentos
+                </div>
+
+                <div class="descricao">
+                    Consulte seus atendimentos
+                </div>
+
+            </a>
+
+
+            <a href="/comissoes" class="botao">
+
+                <div class="icone">💰</div>
+
+                <div class="titulo-botao">
+                    Minhas comissões
+                </div>
+
+                <div class="descricao">
+                    Consulte suas comissões
+                </div>
+
+            </a>
+
+            <a href="/novo-funcionario" class="botao">
+
+                <div class="icone">👤</div>
+
+                <div class="titulo-botao">
+                    Cadastrar funcionário
+                </div>
+
+                <div class="descricao">
+                    Cadastre novos funcionários no sistema
+                </div>
+
+            </a>
+
+            <a href="/todos_agendamentos" class="botao">
+
+                <div class="icone">📋</div>
+
+                <div class="titulo-botao">
+                    Todos os agendamentos
+                </div>
+
+                <div class="descricao">
+                    Visualize os agendamentos de todos os funcionários
+                </div>
+
+            </a>
+
+            <a href="#" class="botao">
+
+                <div class="icone">📊</div>
+
+                <div class="titulo-botao">
+                    Relatórios
+                </div>
+
+                <div class="descricao">
+                    Visualize os relatórios do sistema
+                </div>
+
+            </a>
+
+
+        </div>
+
+
+        <div class="rodape">
+            Sistema Âmbar • Área administrativa ✨
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+
