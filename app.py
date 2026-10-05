@@ -674,7 +674,7 @@ def meus_agendamentos():
         agendamentos=agendamentos
     )
 
-@app.route("/marcar-pago/<int:id_agendamento>")
+@app.route("/marcar-pago/<int:id_agendamento>", methods=["GET", "POST"])
 def marcar_pago(id_agendamento):
 
     if "usuario_id" not in session:
@@ -684,8 +684,41 @@ def marcar_pago(id_agendamento):
 
     with conn.cursor() as cursor:
 
+        
         cursor.execute("""
-            SELECT valor_total
+            SELECT
+                s.id_servico,
+                s.nome,
+                s.preco
+            FROM agendamento_servico ags
+            JOIN servico s
+                ON ags.id_servico = s.id_servico
+            JOIN agendamento a
+                ON a.id_agendamento = ags.id_agendamento
+            WHERE ags.id_agendamento = %s
+              AND a.id_funcionario = %s
+        """, (
+            id_agendamento,
+            session["usuario_id"]
+        ))
+
+        servicos = cursor.fetchall()
+
+       
+        cursor.execute("""
+            SELECT
+                id_regra,
+                descricao,
+                percentual_comissao
+            FROM regra_comissao
+            ORDER BY id_regra
+        """)
+
+        regras = cursor.fetchall()
+
+       
+        cursor.execute("""
+            SELECT pagamento_status
             FROM agendamento
             WHERE id_agendamento = %s
               AND id_funcionario = %s
@@ -694,30 +727,125 @@ def marcar_pago(id_agendamento):
             session["usuario_id"]
         ))
 
-        resultado = cursor.fetchone()
+        agendamento = cursor.fetchone()
 
-        if resultado:
-
-            valor_total = resultado[0]
-
-            cursor.execute("""
-                UPDATE agendamento
-                SET pagamento_status = 'PAGO',
-                    data_pagamento = CURRENT_TIMESTAMP,
-                    valor_total = %s
-                WHERE id_agendamento = %s
-                  AND id_funcionario = %s
-            """, (
-                valor_total,
-                id_agendamento,
-                session["usuario_id"]
-            ))
-
-    conn.commit()
     conn.close()
 
-    return redirect("/meus-agendamentos")
+    if not servicos:
+        return "Agendamento não encontrado."
 
+    if not agendamento:
+        return "Você não tem permissão para esse agendamento."
+
+    if agendamento[0] == "PAGO":
+        return "Esse agendamento já foi pago."
+
+    if request.method == "POST":
+
+        conn = conectar_banco()
+
+        try:
+
+            with conn.cursor() as cursor:
+
+                
+                cursor.execute("""
+                    SELECT pagamento_status
+                    FROM agendamento
+                    WHERE id_agendamento = %s
+                      AND id_funcionario = %s
+                """, (
+                    id_agendamento,
+                    session["usuario_id"]
+                ))
+
+                pagamento = cursor.fetchone()
+
+                if not pagamento:
+                    return "Agendamento não encontrado."
+
+                if pagamento[0] == "PAGO":
+                    return "Esse agendamento já foi pago."
+
+               
+                for servico in servicos:
+
+                    id_servico = servico[0]
+                    preco = servico[2]
+
+                   
+                    id_regra = request.form.get(f"regra_{id_servico}")
+
+                    if not id_regra:
+                        conn.rollback()
+                        return "Escolha uma regra para todos os serviços."
+
+                    cursor.execute("""
+                        SELECT percentual_comissao
+                        FROM regra_comissao
+                        WHERE id_regra = %s
+                    """, (id_regra,))
+
+                    regra = cursor.fetchone()
+
+                    if not regra:
+                        conn.rollback()
+                        return "Regra de comissão inválida."
+
+                    percentual = regra[0]
+
+                   
+                    valor_comissao = preco * percentual / 100
+
+                   
+                    cursor.execute("""
+                        INSERT INTO comissao
+                        (
+                            id_agendamento,
+                            id_servico,
+                            id_regra,
+                            valor,
+                            data_calculo
+                        )
+                        VALUES (%s, %s, %s, %s, CURRENT_DATE)
+                    """, (
+                        id_agendamento,
+                        id_servico,
+                        id_regra,
+                        valor_comissao
+                    ))
+
+                
+                cursor.execute("""
+                    UPDATE agendamento
+                    SET pagamento_status = 'PAGO',
+                        data_pagamento = CURRENT_TIMESTAMP
+                    WHERE id_agendamento = %s
+                      AND id_funcionario = %s
+                """, (
+                    id_agendamento,
+                    session["usuario_id"]
+                ))
+
+            conn.commit()
+
+        except Exception as erro:
+
+            conn.rollback()
+            print("ERRO AO REGISTRAR PAGAMENTO:", erro)
+            return "Erro ao registrar pagamento."
+
+        finally:
+            conn.close()
+
+        return redirect("/meus-agendamentos")
+
+    return render_template(
+        "marcar_pago.html",
+        id_agendamento=id_agendamento,
+        servicos=servicos,
+        regras=regras
+    )
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
