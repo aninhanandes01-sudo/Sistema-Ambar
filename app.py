@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, session
 import psycopg
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import date
+import calendar
 
 app = Flask(__name__)
 app.secret_key = "sistema-ambar-chave-secreta"
@@ -846,6 +848,299 @@ def marcar_pago(id_agendamento):
         servicos=servicos,
         regras=regras
     )
+
+@app.route("/relatorio-faturamento")
+def relatorio_faturamento():
+
+    if "usuario_id" not in session:
+        return redirect("/login")
+
+    if session.get("tipo_usuario") != "funcionario" or session.get("cargo", "").upper() != "ADMINISTRADOR":
+        return redirect("/painel")
+
+    data_inicio = request.args.get("data_inicio", "")
+    data_fim = request.args.get("data_fim", "")
+
+    conn = conectar_banco()
+
+    with conn.cursor() as cursor:
+
+        consulta = """
+            SELECT
+                COUNT(*) AS quantidade_pagamentos,
+                COALESCE(SUM(valor_total), 0) AS faturamento
+            FROM agendamento
+            WHERE pagamento_status = 'PAGO'
+        """
+
+        parametros = []
+
+        if data_inicio:
+            consulta += " AND data_pagamento::date >= %s"
+            parametros.append(data_inicio)
+
+        if data_fim:
+            consulta += " AND data_pagamento::date <= %s"
+            parametros.append(data_fim)
+
+        cursor.execute(consulta, parametros)
+        resumo = cursor.fetchone()
+
+        consulta_detalhes = """
+            SELECT
+                a.id_agendamento,
+                a.data_pagamento,
+                c.nome,
+                f.nome,
+                a.valor_total
+            FROM agendamento a
+            JOIN cliente c
+                ON a.id_cliente = c.id_cliente
+            JOIN funcionario f
+                ON a.id_funcionario = f.id_funcionario
+            WHERE a.pagamento_status = 'PAGO'
+        """
+
+        parametros_detalhes = []
+
+        if data_inicio:
+            consulta_detalhes += " AND a.data_pagamento::date >= %s"
+            parametros_detalhes.append(data_inicio)
+
+        if data_fim:
+            consulta_detalhes += " AND a.data_pagamento::date <= %s"
+            parametros_detalhes.append(data_fim)
+
+        consulta_detalhes += " ORDER BY a.data_pagamento DESC"
+
+        cursor.execute(consulta_detalhes, parametros_detalhes)
+        pagamentos = cursor.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "relatorio_faturamento.html",
+        faturamento=resumo[1],
+        quantidade_pagamentos=resumo[0],
+        pagamentos=pagamentos,
+        data_inicio=data_inicio,
+        data_fim=data_fim
+    )
+
+
+
+@app.route("/relatorio-comissoes", methods=["GET", "POST"])
+def relatorio_comissoes():
+
+    if "usuario_id" not in session:
+        return redirect("/login")
+
+    if (
+        session.get("tipo_usuario") != "funcionario"
+        or session.get("cargo", "").upper() != "ADMINISTRADOR"
+    ):
+        return redirect("/painel")
+
+    hoje = date.today()
+    mes_atual = hoje.strftime("%Y-%m")
+
+    if request.method == "POST":
+
+        quinzena = request.form.get("quinzena", "")
+        mes_selecionado = request.form.get("mes", mes_atual)
+
+        try:
+            ano, mes = map(int, mes_selecionado.split("-"))
+
+            # Valida o mês escolhido.
+            primeiro_dia = date(ano, mes, 1)
+            ultimo_dia_mes = calendar.monthrange(ano, mes)[1]
+
+            if quinzena == "1":
+                data_inicio = primeiro_dia
+                data_fim = date(ano, mes, 15)
+
+            elif quinzena == "2":
+                data_inicio = date(ano, mes, 16)
+                data_fim = date(ano, mes, ultimo_dia_mes)
+
+            else:
+                return "Selecione uma quinzena válida."
+
+        except (ValueError, TypeError):
+            return "O mês ou a quinzena informados são inválidos."
+
+        conn = conectar_banco()
+
+        try:
+            with conn.cursor() as cursor:
+
+                # Busca as comissões que ainda não pertencem
+                # a nenhum fechamento.
+                cursor.execute("""
+                    SELECT
+                        a.id_funcionario,
+                        SUM(c.valor)
+                    FROM comissao c
+                    JOIN agendamento a
+                        ON a.id_agendamento = c.id_agendamento
+                    WHERE a.pagamento_status = 'PAGO'
+                      AND a.data_pagamento::date
+                          BETWEEN %s AND %s
+                      AND c.id_fechamento IS NULL
+                    GROUP BY a.id_funcionario
+                """, (data_inicio, data_fim))
+
+                funcionarios = cursor.fetchall()
+
+                if not funcionarios:
+                    conn.rollback()
+                    return redirect(
+                        "/relatorio-comissoes?sem_comissoes=1"
+                    )
+
+                for funcionario in funcionarios:
+
+                    id_funcionario = funcionario[0]
+
+                    # Cria o fechamento se ele ainda não existir.
+                    cursor.execute("""
+                        INSERT INTO fechamento_comissao (
+                            id_funcionario,
+                            data_inicio,
+                            data_fim,
+                            valor_total,
+                            status
+                        )
+                        VALUES (%s, %s, %s, 0, 'PENDENTE')
+                        ON CONFLICT (
+                            id_funcionario,
+                            data_inicio,
+                            data_fim
+                        ) DO NOTHING
+                    """, (
+                        id_funcionario,
+                        data_inicio,
+                        data_fim
+                    ))
+
+                    # Bloqueia o fechamento durante a conferência.
+                    cursor.execute("""
+                        SELECT id_fechamento, status
+                        FROM fechamento_comissao
+                        WHERE id_funcionario = %s
+                          AND data_inicio = %s
+                          AND data_fim = %s
+                        FOR UPDATE
+                    """, (
+                        id_funcionario,
+                        data_inicio,
+                        data_fim
+                    ))
+
+                    fechamento = cursor.fetchone()
+
+                    if fechamento[1] == "PAGO":
+                        raise ValueError(
+                            "Este fechamento já foi pago. "
+                            "Não é possível adicionar comissões."
+                        )
+
+                    id_fechamento = fechamento[0]
+
+                    # Vincula somente as comissões ainda livres.
+                    cursor.execute("""
+                        UPDATE comissao c
+                        SET id_fechamento = %s
+                        FROM agendamento a
+                        WHERE a.id_agendamento = c.id_agendamento
+                          AND a.id_funcionario = %s
+                          AND a.pagamento_status = 'PAGO'
+                          AND a.data_pagamento::date
+                              BETWEEN %s AND %s
+                          AND c.id_fechamento IS NULL
+                    """, (
+                        id_fechamento,
+                        id_funcionario,
+                        data_inicio,
+                        data_fim
+                    ))
+
+                    # Atualiza o total com os valores já registrados.
+                    cursor.execute("""
+                        UPDATE fechamento_comissao
+                        SET valor_total = (
+                            SELECT COALESCE(SUM(valor), 0)
+                            FROM comissao
+                            WHERE id_fechamento = %s
+                        )
+                        WHERE id_fechamento = %s
+                    """, (id_fechamento, id_fechamento))
+
+            conn.commit()
+
+        except ValueError as erro:
+            conn.rollback()
+            return str(erro)
+
+        except Exception as erro:
+            conn.rollback()
+            print("ERRO NO FECHAMENTO DE COMISSÕES:", erro)
+            return "Erro ao gerar o fechamento de comissões."
+
+        finally:
+            conn.close()
+
+        return redirect("/relatorio-comissoes?gerado=1")
+
+    conn = conectar_banco()
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    fc.id_fechamento,
+                    f.nome,
+                    fc.data_inicio,
+                    fc.data_fim,
+                    fc.valor_total,
+                    fc.status,
+                    fc.data_pagamento
+                FROM fechamento_comissao fc
+                JOIN funcionario f
+                    ON f.id_funcionario = fc.id_funcionario
+                ORDER BY fc.data_inicio DESC, f.nome
+            """)
+
+            fechamentos = cursor.fetchall()
+
+    finally:
+        conn.close()
+
+    return render_template(
+        "relatorio_comissoes.html",
+        fechamentos=fechamentos,
+        gerado=request.args.get("gerado"),
+        sem_comissoes=request.args.get("sem_comissoes"),
+        mes_atual=mes_atual
+    )
+
+
+@app.route("/relatorios")
+def relatorios():
+
+    if "usuario_id" not in session:
+        return redirect("/login")
+
+    if (
+        session.get("tipo_usuario") != "funcionario"
+        or session.get("cargo", "").upper() != "ADMINISTRADOR"
+    ):
+        return redirect("/painel")
+
+    return render_template("relatorios.html")
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
