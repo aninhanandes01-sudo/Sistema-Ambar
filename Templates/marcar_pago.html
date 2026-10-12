@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar pagamento</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background: #053b2b;
+            color: white;
+            padding: 20px 40px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+        }
+
+        h2 {
+            color: #003b39;
+            margin-top: 0;
+        }
+
+        .servico {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .servico h3 {
+            margin: 0 0 8px;
+            color: #003b39;
+        }
+
+        .preco {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .regra {
+            display: block;
+            padding: 10px;
+            margin: 6px 0;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .regra:hover {
+            background: #f1f6f4;
+        }
+
+        .regra input {
+            margin-right: 8px;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        button,
+        .voltar {
+            padding: 12px 22px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        button {
+            border: none;
+            background: #d99a2b;
+            color: white;
+        }
+
+        button:hover {
+            background: #c48820;
+        }
+
+        .voltar {
+            border: 1px solid #003b39;
+            color: #003b39;
+            background: white;
+        }
+
+        .voltar:hover {
+            background: #f1f6f4;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Registrar pagamento</h1>
+    </header>
+
+    <div class="container">
+
+        <h2>Escolha a regra de comissão</h2>
+
+        <p>
+            Selecione uma regra para cada serviço realizado neste agendamento.
+        </p>
+
+        <form method="POST">
+
+            {% for servico in servicos %}
+
+            <div class="servico">
+
+                <h3>{{ servico[1] }}</h3>
+
+                <div class="preco">
+                    R$ {{ "%.2f"|format(servico[2]) }}
+                </div>
+
+                {% for regra in regras %}
+
+                <label class="regra">
+
+                    <input
+                        type="radio"
+                        name="regra_{{ servico[0] }}"
+                        value="{{ regra[0] }}"
+                    >
+
+                    {{ regra[1] }} — {{ regra[2] }}% de comissão
+
+                </label>
+
+                {% endfor %}
+
+            </div>
+
+            {% endfor %}
+
+            <div class="botoes">
+
+                <a href="/meus-agendamentos" class="voltar">
+                    Voltar
+                </a>
+
+                <button type="submit">
+                    Confirmar pagamento
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</body>
+</html>
