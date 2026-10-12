@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Faturamento | Sistema Âmbar</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            background: #f4f7f5;
+            color: #263b34;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        header {
+            background: #053b2b;
+            color: white;
+            padding: 25px;
+            border-bottom: 4px solid #d99a2b;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+        }
+
+        header p {
+            margin: 0;
+            color: #dce9e1;
+        }
+
+        .filtros, .resumo, .tabela {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px #0000000d;
+        }
+
+        .filtros form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #cbd5cf;
+            border-radius: 6px;
+        }
+
+        button, .voltar {
+            display: inline-block;
+            padding: 11px 18px;
+            background: #075040;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .limpar {
+            color: #075040;
+            text-decoration: none;
+            padding: 10px;
+        }
+
+        .cartoes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .cartao {
+            background: #edf5f0;
+            padding: 20px;
+            border-left: 4px solid #d99a2b;
+            border-radius: 8px;
+        }
+
+        .cartao p {
+            margin: 0 0 10px;
+            color: #52665b;
+        }
+
+        .valor {
+            font-size: 28px;
+            font-weight: bold;
+            color: #075040;
+        }
+
+        .tabela {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 13px;
+            text-align: left;
+            border-bottom: 1px solid #e4e9e5;
+        }
+
+        th {
+            background: #edf5f0;
+            color: #075040;
+        }
+
+        .vazio {
+            text-align: center;
+            padding: 25px;
+            color: #68766e;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+
+        <header>
+            <h1>Relatório de Faturamento</h1>
+            <p>Sistema Âmbar — Controle financeiro do salão</p>
+        </header>
+
+        <section class="filtros">
+            <h2>Filtrar por período</h2>
+
+            <form method="GET" action="/relatorio-faturamento">
+                <div class="campo">
+                    <label for="data_inicio">Data inicial</label>
+                    <input
+                        type="date"
+                        id="data_inicio"
+                        name="data_inicio"
+                        value="{{ data_inicio }}"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="data_fim">Data final</label>
+                    <input
+                        type="date"
+                        id="data_fim"
+                        name="data_fim"
+                        value="{{ data_fim }}"
+                    >
+                </div>
+
+                <button type="submit">Consultar</button>
+
+                <a class="limpar" href="/relatorio-faturamento">
+                    Limpar filtros
+                </a>
+            </form>
+        </section>
+
+        <section class="resumo">
+            <h2>Resumo financeiro</h2>
+
+            <div class="cartoes">
+                <div class="cartao">
+                    <p>Total recebido</p>
+                    <div class="valor">
+                        R$ {{ "%.2f"|format(faturamento or 0) }}
+                    </div>
+                </div>
+
+                <div class="cartao">
+                    <p>Pagamentos registrados</p>
+                    <div class="valor">
+                        {{ quantidade_pagamentos }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tabela">
+            <h2>Detalhamento dos pagamentos</h2>
+
+            {% if pagamentos %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Agendamento</th>
+                            <th>Data do pagamento</th>
+                            <th>Cliente</th>
+                            <th>Funcionária</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for pagamento in pagamentos %}
+                            <tr>
+                                <td>#{{ pagamento[0] }}</td>
+                                <td>
+                                    {{ pagamento[1].strftime("%d/%m/%Y %H:%M") }}
+                                </td>
+                                <td>{{ pagamento[2] }}</td>
+                                <td>{{ pagamento[3] }}</td>
+                                <td>
+                                    R$ {{ "%.2f"|format(pagamento[4] or 0) }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="vazio">
+                    Nenhum pagamento encontrado nesse período.
+                </p>
+            {% endif %}
+        </section>
+
+        <a class="voltar" href="/painel">Voltar ao painel</a>
+
+    </main>
+</body>
+</html>

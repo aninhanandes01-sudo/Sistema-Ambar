@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Comissões - Sistema Âmbar</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7f5;
+            margin: 0;
+            padding: 30px;
+            color: #26352f;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #053b2b;
+        }
+
+        .tabela-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 3px 12px #00000010;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 10px;
+            text-align: left;
+            border-bottom: 1px solid #e5e9e6;
+        }
+
+        th {
+            color: #053b2b;
+            background: #edf3ef;
+        }
+
+        .pendente {
+            color: #9a6500;
+            font-weight: bold;
+        }
+
+        .pago {
+            color: #087443;
+            font-weight: bold;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 11px 18px;
+            background: #053b2b;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .vazio {
+            padding: 20px 0;
+            color: #66736b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Relatório de Comissões</h1>
+        <p>Consulte os fechamentos quinzenais dos funcionários.</p>
+
+        
+
+<form method="POST" style="margin: 20px 0;">
+
+    <label for="mes">Mês do fechamento:</label>
+    <input
+        type="month"
+        id="mes"
+        name="mes"
+        value="{{ mes_atual }}"
+        required
+    >
+
+    <label for="quinzena">Quinzena:</label>
+    <select id="quinzena" name="quinzena" required>
+        <option value="1">1ª quinzena (dia 1 ao 15)</option>
+        <option value="2">2ª quinzena (dia 16 ao último dia)</option>
+    </select>
+
+    <button type="submit" style="
+        padding: 10px 16px;
+        background: #053b2b;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+    ">
+        Gerar fechamento
+    </button>
+
+</form>
+
+
+{% if gerado %}
+    <p style="color: #087443;">
+        Fechamento gerado com sucesso!
+    </p>
+{% endif %}
+
+{% if sem_comissoes %}
+    <p>
+        Não existem comissões pendentes de fechamento nesse período.
+    </p>
+{% endif %}
+
+
+        <div class="tabela-container">
+            {% if fechamentos %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Funcionário</th>
+                            <th>Início</th>
+                            <th>Fim</th>
+                            <th>Valor a pagar</th>
+                            <th>Status</th>
+                            <th>Data do pagamento</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for fechamento in fechamentos %}
+                            <tr>
+                                <td>{{ fechamento[1] }}</td>
+                                <td>{{ fechamento[2].strftime("%d/%m/%Y") }}</td>
+                                <td>{{ fechamento[3].strftime("%d/%m/%Y") }}</td>
+                                <td>R$ {{ "%.2f"|format(fechamento[4]) }}</td>
+                                <td>
+                                    {% if fechamento[5] == "PAGO" %}
+                                        <span class="pago">Pago</span>
+                                    {% else %}
+                                        <span class="pendente">Pendente</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if fechamento[6] %}
+                                        {{ fechamento[6].strftime("%d/%m/%Y %H:%M") }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="vazio">
+                    Nenhum fechamento quinzenal foi registrado ainda.
+                </p>
+            {% endif %}
+        </div>
+
+        <a href="/painel" class="voltar">Voltar ao painel</a>
+    </div>
+</body>
+</html>

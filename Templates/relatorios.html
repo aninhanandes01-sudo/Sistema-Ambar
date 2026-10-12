@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Sistema Âmbar</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            font-family: Arial, sans-serif;
+            background: #f4f7f4;
+            color: #053b2b;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .descricao {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .relatorios {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            padding: 25px;
+            background: white;
+            border: 1px solid #d8e3dc;
+            border-radius: 12px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 21px;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .botao {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: #053b2b;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .botao:hover {
+            background: #075040;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-top: 30px;
+            color: #053b2b;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <h1>Relatórios</h1>
+
+        <p class="descricao">
+            Escolha o relatório que deseja consultar.
+        </p>
+
+        <div class="relatorios">
+
+            <section class="card">
+                <h2>Relatório de Faturamento</h2>
+
+                <p>
+                    Consulte os valores recebidos pelo salão
+                    e acompanhe o faturamento.
+                </p>
+
+                <a href="/relatorio-faturamento" class="botao">
+                    Acessar faturamento
+                </a>
+            </section>
+
+            <section class="card">
+                <h2>Relatório de Comissões</h2>
+
+                <p>
+                    Consulte os valores de comissão de cada
+                    funcionário e os fechamentos quinzenais.
+                </p>
+
+                <a href="/relatorio-comissoes" class="botao">
+                    Acessar comissões
+                </a>
+            </section>
+
+        </div>
+
+        <a href="/painel" class="voltar">Voltar ao painel</a>
+    </main>
+</body>
+</html>
