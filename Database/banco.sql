@@ -1,3 +1,4 @@
+
 CREATE TABLE cliente (
     id_cliente SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -49,7 +50,6 @@ CREATE TABLE agendamento (
     id_cliente INTEGER NOT NULL,
     id_funcionario INTEGER NOT NULL,
     status VARCHAR(30) NOT NULL,
-
     valor_total DECIMAL(10,2) DEFAULT 0,
     pagamento_status VARCHAR(20) DEFAULT 'PENDENTE',
     data_pagamento TIMESTAMP,
@@ -90,28 +90,16 @@ CREATE TABLE regra_comissao (
 );
 
 
-INSERT INTO regra_comissao
-(
+INSERT INTO regra_comissao (
     descricao,
     percentual_material_profissional,
     percentual_comissao
 )
 VALUES
-(
-    'Produtos do Studio',
-    0.00,
-    30.00
-),
-(
-    'Metade Studio e metade profissional',
-    50.00,
-    50.00
-),
-(
-    '80% do material do profissional',
-    80.00,
-    60.00
-);
+    ('Produtos do Studio', 0.00, 30.00),
+    ('Metade Studio e metade profissional', 50.00, 50.00),
+    ('80% do material do profissional', 80.00, 60.00);
+
 
 CREATE TABLE fechamento_comissao (
     id_fechamento SERIAL PRIMARY KEY,
@@ -119,13 +107,16 @@ CREATE TABLE fechamento_comissao (
         REFERENCES funcionario(id_funcionario),
     data_inicio DATE NOT NULL,
     data_fim DATE NOT NULL,
-    valor_total NUMERIC(10, 2) NOT NULL DEFAULT 0,
+    valor_total NUMERIC(10,2) NOT NULL DEFAULT 0,
     status VARCHAR(20) NOT NULL DEFAULT 'PENDENTE',
     data_pagamento TIMESTAMP,
+
     CONSTRAINT periodo_valido
         CHECK (data_fim >= data_inicio),
+
     CONSTRAINT status_fechamento_valido
         CHECK (status IN ('PENDENTE', 'PAGO')),
+
     CONSTRAINT fechamento_unico
         UNIQUE (id_funcionario, data_inicio, data_fim)
 );
@@ -133,11 +124,10 @@ CREATE TABLE fechamento_comissao (
 
 CREATE TABLE comissao (
     id_comissao SERIAL PRIMARY KEY,
-
     id_agendamento INTEGER NOT NULL,
     id_servico INTEGER NOT NULL,
     id_regra INTEGER NOT NULL,
-
+    id_fechamento INTEGER,
     valor DECIMAL(10,2) NOT NULL,
     data_calculo DATE NOT NULL,
 
@@ -149,22 +139,20 @@ CREATE TABLE comissao (
         FOREIGN KEY (id_regra)
         REFERENCES regra_comissao(id_regra),
 
+    CONSTRAINT fk_comissao_fechamento
+        FOREIGN KEY (id_fechamento)
+        REFERENCES fechamento_comissao(id_fechamento),
+
     CONSTRAINT uq_comissao_procedimento
         UNIQUE (id_agendamento, id_servico)
 );
 
 
-CREATE UNIQUE INDEX uq_funcionario_data_horario_ativo
-ON agendamento (id_funcionario, data, horario)
-WHERE status IN ('PENDENTE', 'CONFIRMADO');
-
-
 CREATE TABLE notificacao (
     id_notificacao SERIAL PRIMARY KEY,
-
-    id_cliente INTEGER NOT NULL,
+    id_cliente INTEGER,
+    id_funcionario INTEGER,
     id_agendamento INTEGER,
-
     mensagem TEXT NOT NULL,
     tipo VARCHAR(50) NOT NULL,
     lida BOOLEAN NOT NULL DEFAULT FALSE,
@@ -174,8 +162,18 @@ CREATE TABLE notificacao (
         FOREIGN KEY (id_cliente)
         REFERENCES cliente(id_cliente),
 
+    CONSTRAINT fk_notificacao_funcionario
+        FOREIGN KEY (id_funcionario)
+        REFERENCES funcionario(id_funcionario),
+
     CONSTRAINT fk_notificacao_agendamento
         FOREIGN KEY (id_agendamento)
-        REFERENCES agendamento(id_agendamento)
-);
+        REFERENCES agendamento(id_agendamento),
 
+    CONSTRAINT notificacao_destinatario
+        CHECK (
+            (id_cliente IS NOT NULL AND id_funcionario IS NULL)
+            OR
+            (id_cliente IS NULL AND id_funcionario IS NOT NULL)
+        )
+);
