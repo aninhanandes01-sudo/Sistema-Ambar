@@ -1,6 +1,8 @@
 
-<!DOCTYPE html>
+
+ <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,87 +15,219 @@
 
         body {
             margin: 0;
-            padding: 40px 20px;
+            min-height: 100vh;
             font-family: Arial, sans-serif;
-            background: #f4f7f4;
-            color: #053b2b;
+            background: linear-gradient(135deg, #003b39, #075040, #0b6655);
+            color: #e4eae9;
+            padding: 0 20px 40px;
+        }
+
+        .cabecalho {
+            width: calc(100% + 40px);
+            min-height: 80px;
+            background: #053b2b;
+            display: flex;
+            align-items: center;
+            padding: 10px 40px;
+            margin: 0 -20px 40px;
+            border-bottom: 1px solid rgba(217, 154, 43, 0.5);
+        }
+
+        .link-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 90px;
+            height: auto;
+            display: block;
         }
 
         .container {
-            max-width: 850px;
-            margin: auto;
+            max-width: 950px;
+            margin: 0 auto;
         }
 
-        h1 {
-            margin-bottom: 10px;
+        .introducao {
+            text-align: center;
+            color: white;
+            margin-bottom: 35px;
+        }
+
+        .linha {
+            width: 60px;
+            height: 2px;
+            background: #d99a2b;
+            margin: 22px auto;
+        }
+
+        .introducao h1 {
+            font-family: Georgia, serif;
+            font-size: 32px;
+            font-weight: normal;
+            margin: 0 0 12px;
         }
 
         .descricao {
-            color: #666;
-            margin-bottom: 30px;
+            color: #e0e9e4;
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 0;
         }
 
         .relatorios {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
         }
 
         .card {
-            padding: 25px;
-            background: white;
-            border: 1px solid #d8e3dc;
+            background: #fffdf8;
+            border: 1px solid #e4d5b5;
+            border-radius: 14px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+        }
+
+        .icone {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 12px;
+            background: #eaf2ed;
+            color: #075040;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
 
         .card h2 {
-            margin-top: 0;
-            font-size: 21px;
+            font-family: Georgia, serif;
+            color: #053b2b;
+            font-size: 23px;
+            font-weight: normal;
+            margin: 0 0 12px;
         }
 
         .card p {
             color: #666;
-            line-height: 1.5;
+            line-height: 1.7;
+            font-size: 14px;
+            margin: 0 0 24px;
+            flex-grow: 1;
         }
 
         .botao {
             display: inline-block;
-            margin-top: 12px;
-            padding: 12px 16px;
+            text-align: center;
+            padding: 13px 16px;
             background: #053b2b;
             color: white;
             text-decoration: none;
             border-radius: 7px;
+            font-size: 14px;
+            transition: background 0.2s;
         }
 
         .botao:hover {
-            background: #075040;
+            background: #075c49;
         }
 
         .voltar {
             display: inline-block;
             margin-top: 30px;
-            color: #053b2b;
+            color: #f0d9a6;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .voltar:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 0 16px 30px;
+            }
+
+            .cabecalho {
+                width: calc(100% + 32px);
+                min-height: 70px;
+                padding: 10px 20px;
+                margin: 0 -16px 30px;
+            }
+
+            .logo {
+                width: 75px;
+            }
+
+            .introducao h1 {
+                font-size: 28px;
+            }
+
+            .descricao {
+                font-size: 14px;
+            }
+
+            .relatorios {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 24px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <main class="container">
-        <h1>Relatórios</h1>
 
-        <p class="descricao">
-            Escolha o relatório que deseja consultar.
-        </p>
+    <header class="cabecalho">
+        <a href="/" class="link-logo">
+            <img
+                src="{{ url_for('static', filename='logo.png') }}"
+                alt="Logo Âmbar"
+                class="logo"
+            >
+        </a>
+    </header>
+
+    <main class="container">
+
+        <section class="introducao">
+            <h1>Relatórios</h1>
+
+            <div class="linha"></div>
+
+            <p class="descricao">
+                Acompanhe os resultados do salão e consulte
+                as informações financeiras do Sistema Âmbar.
+            </p>
+        </section>
 
         <div class="relatorios">
 
             <section class="card">
+                <div class="icone">R$</div>
+
                 <h2>Relatório de Faturamento</h2>
 
                 <p>
-                    Consulte os valores recebidos pelo salão
-                    e acompanhe o faturamento.
+                    Consulte os valores recebidos pelo salão,
+                    acompanhe os pagamentos registrados e analise
+                    o faturamento em determinado período.
                 </p>
 
                 <a href="/relatorio-faturamento" class="botao">
@@ -102,11 +236,14 @@
             </section>
 
             <section class="card">
+                <div class="icone">%</div>
+
                 <h2>Relatório de Comissões</h2>
 
                 <p>
                     Consulte os valores de comissão de cada
-                    funcionário e os fechamentos quinzenais.
+                    funcionário e acompanhe os fechamentos
+                    quinzenais realizados pelo salão.
                 </p>
 
                 <a href="/relatorio-comissoes" class="botao">
@@ -116,7 +253,10 @@
 
         </div>
 
-        <a href="/painel" class="voltar">Voltar ao painel</a>
+        <a href="/painel" class="voltar">← Voltar ao painel</a>
+
     </main>
+
 </body>
+
 </html>

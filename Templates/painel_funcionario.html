@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -8,56 +9,67 @@
     <title>Âmbar - Painel do Funcionário</title>
 
     <style>
+
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
         body {
-            margin: 0;
-            background: #004f4b;
-            color: white;
+            min-height: 100vh;
+            background: linear-gradient(
+                110deg,
+                #003b39 0%,
+                #01524e 48%,
+                #7bb6a9 100%
+            );
+            color: #003b39;
             font-family: Arial, sans-serif;
         }
 
         .topo {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 40px;
-}
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+        }
 
-.logo {
-    width: 100px;
-}
+        .logo {
+            width: 100px;
+        }
 
-.topo-direita {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+        .topo-direita {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
 
-.perfil {
-    color: #d4af37;
-    text-decoration: none;
-    font-weight: bold;
-}
+        .perfil,
+        .sair {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
 
-.sair {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-}       
+        .perfil:hover,
+        .sair:hover {
+            color: #f0a52b;
+        }
 
-.conteudo {
-            max-width: 1000px;
-            margin: 50px auto;
+        .conteudo {
+            max-width: 950px;
+            margin: 55px auto 0;
             padding: 0 20px;
             text-align: center;
         }
 
         h1 {
+            color: white;
             font-size: 32px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         h1 span {
@@ -65,60 +77,89 @@
         }
 
         .subtitulo {
-            color: #d9e8e6;
+            color: #e1eeea;
             margin-bottom: 45px;
-            font-size: 17px;
+            font-size: 16px;
+            line-height: 1.7;
         }
 
         .menu {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 22px;
         }
 
         .botao {
-            background: #003b39;
-            border: 1px solid #d99a2b;
-            color: white;
-            padding: 30px 20px;
-            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 175px;
+            padding: 28px 22px;
+
+            background: #f8f7f1;
+            border: 1px solid rgba(217, 154, 43, 0.55);
+            color: #003b39;
+
+            border-radius: 13px;
             text-decoration: none;
-            font-size: 17px;
-            transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
+
+            box-shadow: 0 5px 18px rgba(0, 30, 28, 0.12);
+
+            transition: 0.25s ease;
         }
 
         .botao:hover {
-            background: #d99a2b;
-            color: #003b39;
-            transform: translateY(-5px);
+            background: #ffffff;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0, 30, 28, 0.18);
+            border-color: #d99a2b;
         }
 
         .icone {
-            font-size: 35px;
-            margin-bottom: 12px;
+            width: 38px;
+            height: 3px;
+            background: #d99a2b;
+            border-radius: 5px;
+            margin-bottom: 20px;
         }
 
         .titulo-botao {
             font-weight: bold;
             font-size: 18px;
+            margin-bottom: 9px;
         }
 
         .descricao {
+            color: #71817a;
             font-size: 13px;
-            margin-top: 8px;
-            opacity: 0.8;
+            line-height: 1.6;
         }
 
         .rodape {
-            margin-top: 55px;
-            color: #c7d9d7;
+            margin-top: 45px;
+            padding-bottom: 25px;
+            color: #e1eeea;
             font-size: 13px;
         }
 
         @media (max-width: 650px) {
+
             .topo {
-                padding: 15px 20px;
+                padding: 18px 20px;
+            }
+
+            .logo {
+                width: 80px;
+            }
+
+            .topo-direita {
+                gap: 18px;
+            }
+
+            .conteudo {
+                margin-top: 35px;
             }
 
             .menu {
@@ -128,31 +169,45 @@
             h1 {
                 font-size: 26px;
             }
+
+            .subtitulo {
+                font-size: 14px;
+                margin-bottom: 30px;
+            }
+
+            .botao {
+                min-height: 150px;
+            }
+
         }
+
     </style>
+
 </head>
 
 <body>
 
     <div class="topo">
 
-    <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+        <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            class="logo"
+            alt="Logo Âmbar"
+        >
 
-    <div class="topo-direita">
+        <div class="topo-direita">
 
-    <a href="/perfil" class="perfil">
-        Perfil
-    </a>
+            <a href="/perfil" class="perfil">
+                Perfil
+            </a>
 
-    <a href="/logout" class="sair">
-        Sair
-    </a>
+            <a href="/logout" class="sair">
+                Sair
+            </a>
 
-</div>
+        </div>
 
     </div>
-
-</div>
 
     <div class="conteudo">
 
@@ -161,14 +216,15 @@
         </h1>
 
         <p class="subtitulo">
-            Bem-vindo ao seu painel Âmbar 🧡<br>
+            Bem-vindo ao seu painel Âmbar.<br>
             O que você deseja fazer hoje?
         </p>
 
         <div class="menu">
 
             <a href="/minha-agenda" class="botao">
-                <div class="icone">📅</div>
+
+                <div class="icone"></div>
 
                 <div class="titulo-botao">
                     Minha agenda
@@ -177,39 +233,27 @@
                 <div class="descricao">
                     Defina seus dias e horários disponíveis
                 </div>
+
             </a>
 
-           <a href="/meus-agendamentos" class="botao">
+            <a href="/meus-agendamentos" class="botao">
 
-    <div class="icone">🗓️</div>
-
-    <div class="titulo-botao">
-        Meus agendamentos
-    </div>
-
-    <div class="descricao">
-        Consulte seus atendimentos
-    </div>
-
-</a>
-            </a>
-
-            <a href="/comissoes" class="botao">
-                <div class="icone">💰</div>
+                <div class="icone"></div>
 
                 <div class="titulo-botao">
-                    Minhas comissões
+                    Meus agendamentos
                 </div>
 
                 <div class="descricao">
-                    Consulte suas comissões
+                    Consulte seus atendimentos
                 </div>
+
             </a>
 
         </div>
 
         <div class="rodape">
-            Sistema Âmbar • Seu cuidado começa aqui ✨
+            Sistema Âmbar • Seu cuidado começa aqui
         </div>
 
     </div>

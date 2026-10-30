@@ -31,3 +31,17 @@ npm-debug.log*
 # Misc
 .cache/
 temp/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+.env
+.env.local
+.env.*.local
+.venv/
+venv/
+__pycache__/
+*.py[cod]

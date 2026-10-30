@@ -1,12 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Funcionário</title>
-</head>
-<style>
+    <title>Novo Funcionário | Âmbar</title>
 
+    <style>
         * {
             box-sizing: border-box;
         }
@@ -14,145 +14,277 @@
         body {
             margin: 0;
             min-height: 100vh;
-            background-color: rgb(5, 109, 95);
+            background: linear-gradient(135deg, #003b39, #056d5f, #004f4b);
             font-family: Arial, sans-serif;
-
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            padding: 35px 15px;
         }
 
-        h1 {
-            margin-top: 60px;
-            margin-bottom: 5px;
-
-            font-family: Georgia, Times, serif;
-            color: white;
-            font-size: 38px;
+        .pagina {
+            width: 400px;
+            margin: 50px auto;
+            text-align: center;
         }
 
-        .subtitulo {
-            color: white;
-            margin-bottom: 25px;
+        .logo {
+            width: 250px;
+        }
+
+        .frase {
+            color: #e5e8df;
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
         .caixa {
-            width: 420px;
-            max-width: 90%;
-
+            width: 440px;
+            max-width: 100%;
             background: #002f2d;
-            padding: 30px;
-
+            padding: 35px;
             border-radius: 15px;
             border: 1px solid #d99a2b;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        }
 
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+        .detalhe {
+            color: #d99a2b;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            color: white;
+            font-family: Georgia, Times, serif;
+            font-weight: normal;
+            font-size: 30px;
+            text-align: center;
+            margin: 0 0 12px;
+        }
+
+        .subtitulo {
+            color: #c5d2c9;
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0 0 28px;
+        }
+
+        .linha {
+            width: 45px;
+            height: 2px;
+            background: #d99a2b;
+            margin: 0 auto 25px;
+        }
+
+        .campo {
+            margin-bottom: 18px;
         }
 
         label {
             display: block;
-
             color: white;
+            font-size: 13px;
             font-weight: bold;
-
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         input {
             width: 100%;
-
-            padding: 12px;
-
-            margin-bottom: 18px;
-
+            padding: 13px;
             border-radius: 8px;
-            border: 1px solid #d99a2b;
-
+            border: 1px solid #47746b;
             background: #004f4b;
             color: white;
-
-            font-size: 15px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            transition: 0.2s;
         }
 
         input::placeholder {
-            color: #cccccc;
+            color: #b9c9c3;
         }
 
         input:focus {
             outline: none;
-            border: 2px solid #ff9418;
+            border-color: #d99a2b;
+            box-shadow: 0 0 0 2px rgba(217, 154, 43, 0.12);
+        }
+
+        .observacao {
+            color: #b9c9c3;
+            font-size: 11px;
+            margin-top: 7px;
         }
 
         button {
             width: 100%;
-
-            padding: 12px;
-            margin-top: 5px;
-
+            padding: 14px;
+            margin-top: 8px;
             border: none;
             border-radius: 8px;
-
-            background: #ff9418;
+            background: #d99a2b;
             color: #003b39;
-
             font-weight: bold;
-            font-size: 16px;
-
+            font-size: 15px;
             cursor: pointer;
-
             transition: 0.2s;
         }
 
         button:hover {
-            background: #d99a2b;
+            background: #f0b447;
+            transform: translateY(-1px);
         }
-
-        
 
         .voltar {
             display: block;
-
-            margin-top: 20px;
-
+            margin-top: 23px;
             text-align: center;
-
-            color: white;
+            color: #e5e8df;
+            font-size: 13px;
             text-decoration: none;
         }
 
         .voltar:hover {
-            color: #ff9418;
+            color: #d99a2b;
         }
 
+        footer {
+            margin-top: 25px;
+            color: #c5d2c9;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        footer span {
+            color: #d99a2b;
+        }
+
+        @media (max-width: 480px) {
+            .caixa {
+                padding: 27px 22px;
+            }
+
+            h1 {
+                font-size: 27px;
+            }
+
+            .logo {
+                font-size: 27px;
+            }
+        }
     </style>
+</head>
+
 <body>
 
-    <h1>Novo Funcionário</h1>
+    <div class="pagina"></div>
 
-    <form method="POST">
+    <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            class="logo"
+            alt="Logo Âmbar"
+        >
 
-        <label>Nome:</label><br>
-        <input type="text" name="nome" required><br><br>
+    <div class="frase">
+        ILUMINE QUEM VOCÊ É, SEM MEDO DE BRILHAR.
+    </div>
 
-        <label>Cargo:</label><br>
-        <input type="text" name="cargo" required><br><br>
+    <main class="caixa">
 
-        <label>E-mail:</label><br>
-        <input type="email" name="email" required><br><br>
+        <div class="detalhe">Nossa equipe</div>
 
-        <label>Telefone:</label><br>
-        <input type="text" name="telefone"><br><br>
+        <h1>Novo Funcionário</h1>
 
-        <label>Senha:</label><br>
-        <input type="password" name="senha" required><br><br>
+        <p class="subtitulo">
+            Cadastre um novo integrante da equipe
+            para fazer parte do Âmbar.
+        </p>
 
-         <button type="submit">Cadastrar</button>
+        <div class="linha"></div>
 
-    </form>
+        <form method="POST">
 
-    <br>
+            <div class="campo">
+                <label for="nome">Nome completo</label>
+                <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    placeholder="Digite o nome completo"
+                    required
+                >
+            </div>
 
-    <a href="/login">Voltar para login</a>
+            <div class="campo">
+                <label for="cargo">Cargo</label>
+                <input
+                    type="text"
+                    id="cargo"
+                    name="cargo"
+                    placeholder="Ex.: Cabeleireira"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="email">E-mail</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="exemplo@email.com"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="telefone">Telefone</label>
+                <input
+                    type="tel"
+                    id="telefone"
+                    name="telefone"
+                    placeholder="(61) 99999-9999"
+                >
+            </div>
+
+            <div class="campo">
+                <label for="senha">Senha de acesso</label>
+                <input
+                    type="password"
+                    id="senha"
+                    name="senha"
+                    placeholder="Crie uma senha"
+                    required
+                >
+                <div class="observacao">
+                    Essa senha será utilizada para acessar o sistema.
+                </div>
+            </div>
+
+            <button type="submit">
+                Cadastrar funcionário
+            </button>
+
+        </form>
+
+        <a href="/painel" class="voltar">
+            ← Voltar para o painel
+        </a>
+
+    </main>
+
+    <footer>
+        <span>ÂMBAR</span> · Beleza, cuidado e elegância.
+    </footer>
 
 </body>
 </html>

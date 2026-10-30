@@ -1,255 +1,292 @@
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Âmbar - Painel</title>
 
-
-<style>
-
-    * {
-        box-sizing: border-box;
-    }
-
-    body {
-        margin: 0;
-        background: #004f4b;
-        color: white;
-        font-family: Arial, sans-serif;
-    }
-
-    /* CABEÇALHO */
-   .topo {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 40px;
-}
-
-.logo {
-    width: 100px;
-}
-
-.topo-direita {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.perfil {
-    color: #d4af37;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.sair {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-}
-    
-    .conteudo {
-        max-width: 1000px;
-        margin: 50px auto;
-        padding: 0 20px;
-        text-align: center;
-    }
-
-    h1 {
-        font-size: 32px;
-        margin-bottom: 8px;
-        text-align: center;
-    }
-
-    h1 span {
-        color: #f0a52b;
-        text-align: center;
-    }
-
-    .subtitulo {
-        color: #d9e8e6;
-        margin-bottom: 45px;
-        font-size: 17px;
-        text-align: center;
-    }
-
-    
-    .menu {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 22px;
-    }
-
-    .botao {
-        background: #003b39;
-        border: 1px solid #d99a2b;
-        color: white;
-        padding: 30px 20px;
-        border-radius: 15px;
-        text-decoration: none;
-        font-size: 17px;
-        transition: 0.3s;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.18);
-    }
-
-    .botao:hover {
-        background: #d99a2b;
-        color: #003b39;
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.25);
-    }
-
-    .icone {
-        font-size: 35px;
-        margin-bottom: 12px;
-    }
-
-    .titulo-botao {
-        font-weight: bold;
-        font-size: 18px;
-    }
-
-    .descricao {
-        font-size: 13px;
-        margin-top: 8px;
-        opacity: 0.8;
-    }
-
-    
-    .rodape {
-        margin-top: 55px;
-        color: #c7d9d7;
-        font-size: 13px;
-    }
-
-    
-    @media (max-width: 650px) {
-
-        .topo {
-            padding: 15px 20px;
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-        .menu {
-            grid-template-columns: 1fr;
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #003b39, #01524e, #7bb6a9);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+        }
+
+        .logo {
+            width: 100px;
+        }
+
+        .topo-direita {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .perfil,
+        .sair {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .perfil:hover,
+        .sair:hover {
+            color: #f0c36a;
+        }
+
+        .botao-notificacao {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: transparent;
+            color: #f0c36a;
+            border: 1px solid #d99a2b;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .botao-notificacao:hover {
+            background: #d99a2b;
+            color: #003b39;
+        }
+
+        .botao-notificacao svg {
+            width: 19px;
+            height: 19px;
+            stroke: currentColor;
+        }
+
+        .conteudo {
+            max-width: 1000px;
+            margin: 65px auto;
+            padding: 0 20px;
+            text-align: center;
         }
 
         h1 {
-            font-size: 26px;
+            font-size: 32px;
+            margin-bottom: 10px;
         }
-    }
 
-</style>
+        h1 span {
+            color: #f0c36a;
+        }
 
+        .subtitulo {
+            color: #e3eeeb;
+            margin-bottom: 45px;
+            font-size: 17px;
+            line-height: 1.6;
+        }
 
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+
+        .botao {
+            display: block;
+            background: #f8f7f1;
+            border: 1px solid rgba(217, 154, 43, 0.45);
+            color: #003b39;
+            padding: 30px 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .botao:hover {
+            transform: translateY(-4px);
+            background: white;
+            box-shadow: 0 9px 20px rgba(0, 0, 0, 0.18);
+            border-color: #d99a2b;
+        }
+
+        .icone {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .titulo-botao {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .descricao {
+            font-size: 13px;
+            margin-top: 9px;
+            color: #647572;
+            line-height: 1.5;
+        }
+
+        .rodape {
+            margin-top: 55px;
+            color: #e3eeeb;
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+            .topo {
+                padding: 15px 20px;
+            }
+
+            .topo-direita {
+                gap: 12px;
+            }
+
+            .botao-notificacao {
+                padding: 8px;
+                font-size: 12px;
+            }
+
+            .menu {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .conteudo {
+                margin: 40px auto;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="topo">
+    <div class="topo">
 
-    <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
 
-    <div class="topo-direita">
+        <div class="topo-direita">
 
-    <a href="/perfil" class="perfil">
-        Perfil
-    </a>
+            <a href="/perfil" class="perfil">
+                Perfil
+            </a>
 
-    <a href="/logout" class="sair">
-        Sair
-    </a>
+            <a href="/notificacoes" class="botao-notificacao">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                    <path d="M10 21h4"></path>
+                </svg>
+                Notificações
+            </a>
 
-</div>
+            <a href="/logout" class="sair">
+                Sair
+            </a>
 
-</div>
-
-<div class="conteudo">
-
-    <h1>
-        Olá, <span>{{ session["usuario_nome"] }}</span>!
-    </h1>
-
-    <p class="subtitulo">
-        Bem-vindo ao seu perfil Âmbar 🧡<br>
-        O que você deseja fazer hoje?
-    </p>
-
-
-    <div class="menu">
-
-       <a href="{{ url_for('agendamentos') }}" class="botao">
-
-    <div class="icone">📅</div>
-
-    <div class="titulo-botao">
-        Agendar horário
-    </div>
-
-    <div class="descricao">
-        Escolha seu serviço, profissional, data e horário
-    </div>
-
-</a>
-
-
-        <a href="/meus-agendamentos-cliente" class="botao">
-
-    <div class="icone">🗓️</div>
-
-    <div class="titulo-botao">
-        Meus agendamentos
-    </div>
-
-    <div class="descricao">
-        Consulte seus horários marcados
-    </div>
-
-</a>
-        </a>
-
-
-        <a href="{{ url_for('servicos') }}" class="botao">
-     
-        <div class="icone">✨</div>
-
-
-    <div class="titulo-botao">
-        Serviços
-    </div>
-
-            <div class="descricao">
-                Veja os serviços disponíveis
-            </div>
-
-        </a>
-
-
-        <a href="#" class="botao">
-
-            <div class="icone">👤</div>
-
-            <div class="titulo-botao">
-                Meu perfil
-            </div>
-
-            <div class="descricao">
-                Consulte e edite seus dados
-            </div>
-
-        </a>
+        </div>
 
     </div>
 
+    <div class="conteudo">
 
-    <div class="rodape">
-        Sistema Âmbar • Seu cuidado começa aqui ✨
+        <h1>
+            Olá, <span>{{ session["usuario_nome"] }}</span>!
+        </h1>
+
+        <p class="subtitulo">
+            Bem-vindo ao seu perfil Âmbar <br>
+            O que você deseja fazer hoje?
+        </p>
+
+        <div class="menu">
+
+            <a href="{{ url_for('agendamentos') }}" class="botao">
+
+
+
+                <div class="titulo-botao">
+                    Agendar horário
+                </div>
+
+                <div class="descricao">
+                    Escolha seu serviço, profissional, data e horário
+                </div>
+
+            </a>
+
+            <a href="/meus-agendamentos-cliente" class="botao">
+
+
+
+                <div class="titulo-botao">
+                    Meus agendamentos
+                </div>
+
+                <div class="descricao">
+                    Consulte seus horários marcados
+                </div>
+
+            </a>
+
+            <a href="{{ url_for('servicos') }}" class="botao">
+
+
+
+                <div class="titulo-botao">
+                    Serviços
+                </div>
+
+                <div class="descricao">
+                    Veja os serviços disponíveis
+                </div>
+
+            </a>
+
+            <a href="{{ url_for('perfil') }}" class="botao">
+
+
+
+                <div class="titulo-botao">
+                    Meu perfil
+                </div>
+
+                <div class="descricao">
+                    Consulte e edite seus dados
+                </div>
+
+            </a>
+
+        </div>
+
+        <div class="rodape">
+            Sistema Âmbar • Seu cuidado começa aqui ✨
+        </div>
+
     </div>
-
-</div>
-
 
 </body>
-
 </html>

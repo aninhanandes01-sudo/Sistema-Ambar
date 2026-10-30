@@ -1,178 +1,582 @@
 
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório de Comissões - Sistema Âmbar</title>
+    <title>Relatório de Comissões | Âmbar</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f7f5;
             margin: 0;
-            padding: 30px;
-            color: #26352f;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #f5f5ef;
+            color: #293b31;
+        }
+
+         .cabecalho {
+            width: calc(100% + 40px);
+            min-height: 80px;
+            background: #053b2b;
+            display: flex;
+            align-items: center;
+            padding: 10px 40px;
+            margin: 0 -20px 40px;
+            border-bottom: 1px solid rgba(217, 154, 43, 0.5);
+        }
+
+        .link-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 90px;
+            height: auto;
+            display: block;
+        }
+
+
+        .sublogo {
+            color: #e1e8df;
+            font-size: 10px;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .voltar-topo {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .voltar-topo:hover {
+            color: #f0c879;
         }
 
         .container {
-            max-width: 1100px;
-            margin: auto;
+            max-width: 1150px;
+            margin: 40px auto;
+            padding: 0 25px;
+        }
+
+        .introducao {
+            margin-bottom: 30px;
+        }
+
+        .detalhe {
+            color: #a87520;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
         }
 
         h1 {
-            color: #053b2b;
+            color: #06483b;
+            font-family: Georgia, Times, serif;
+            font-size: 34px;
+            font-weight: normal;
+            margin: 0 0 12px;
+        }
+
+        .introducao p {
+            color: #737d72;
+            font-size: 14px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .linha-dourada {
+            width: 48px;
+            height: 2px;
+            background: #d99a2b;
+            margin-top: 20px;
+        }
+
+        .filtros {
+            background: white;
+            padding: 25px;
+            border: 1px solid #e6e5d9;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(25, 57, 39, 0.04);
+            margin-bottom: 25px;
+        }
+
+        .filtros h2 {
+            color: #06483b;
+            font-size: 17px;
+            margin: 0 0 7px;
+        }
+
+        .filtros p {
+            color: #858c80;
+            font-size: 13px;
+            margin: 0 0 22px;
+            line-height: 1.5;
+        }
+
+        .campos {
+            display: flex;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        label {
+            color: #3e5747;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            min-height: 43px;
+            padding: 11px 12px;
+            border: 1px solid #d8dfd6;
+            border-radius: 7px;
+            background: #fbfcf8;
+            color: #304538;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #0b6651;
+            box-shadow: 0 0 0 2px rgba(11, 102, 81, 0.1);
+        }
+
+        .gerar {
+            min-height: 43px;
+            padding: 0 22px;
+            background: #075040;
+            border: 1px solid #075040;
+            border-radius: 7px;
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .gerar:hover {
+            background: #003b32;
+        }
+
+        .mensagem {
+            padding: 14px 17px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .sucesso {
+            background: #e7f3e9;
+            border: 1px solid #c6e2cc;
+            color: #17633c;
+        }
+
+        .informacao {
+            background: #fff6e3;
+            border: 1px solid #eed9a9;
+            color: #855c13;
+        }
+
+        .relatorio {
+            background: white;
+            border: 1px solid #e6e5d9;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(25, 57, 39, 0.04);
+        }
+
+        .relatorio-topo {
+            padding: 23px 25px;
+            border-bottom: 1px solid #e9e9e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .relatorio-topo h2 {
+            color: #06483b;
+            font-size: 18px;
+            margin: 0 0 6px;
+        }
+
+        .relatorio-topo p {
+            color: #858c80;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .ornamento {
+            color: #c18b2a;
+            font-size: 25px;
         }
 
         .tabela-container {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
+            width: 100%;
             overflow-x: auto;
-            box-shadow: 0 3px 12px #00000010;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            white-space: nowrap;
         }
 
-        th, td {
-            padding: 14px 10px;
+        th,
+        td {
+            padding: 17px 16px;
             text-align: left;
-            border-bottom: 1px solid #e5e9e6;
+            border-bottom: 1px solid #eeeee7;
+            font-size: 12px;
         }
 
         th {
-            color: #053b2b;
-            background: #edf3ef;
+            background: #f0f4ed;
+            color: #385744;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+        }
+
+        td {
+            color: #536156;
+        }
+
+        tbody tr:hover {
+            background: #fafbf7;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .nome-funcionario {
+            color: #174b38;
+            font-weight: bold;
+        }
+
+        .valor {
+            color: #075040;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
         }
 
         .pendente {
-            color: #9a6500;
-            font-weight: bold;
+            color: #946400;
+            background: #fff2ce;
         }
 
         .pago {
-            color: #087443;
-            font-weight: bold;
+            color: #17663c;
+            background: #e2f3e6;
+        }
+
+        .vazio {
+            padding: 40px 20px;
+            text-align: center;
+            color: #7d887d;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .vazio-simbolo {
+            display: block;
+            font-size: 28px;
+            color: #c18b2a;
+            margin-bottom: 12px;
         }
 
         .voltar {
             display: inline-block;
-            margin-top: 20px;
-            padding: 11px 18px;
-            background: #053b2b;
-            color: white;
-            text-decoration: none;
+            margin-top: 25px;
+            padding: 12px 20px;
+            background: white;
+            border: 1px solid #cbd8cb;
             border-radius: 7px;
+            color: #075040;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            transition: 0.2s;
         }
 
-        .vazio {
-            padding: 20px 0;
-            color: #66736b;
+        .voltar:hover {
+            background: #edf3eb;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px 15px;
+            color: #8a9287;
+            font-size: 11px;
+        }
+
+        footer span {
+            color: #a87520;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 650px) {
+            header {
+                padding: 18px 20px;
+            }
+
+            .logo {
+                font-size: 23px;
+            }
+
+            .voltar-topo {
+                font-size: 11px;
+            }
+
+            .container {
+                margin: 30px auto;
+                padding: 0 15px;
+            }
+
+            h1 {
+                font-size: 29px;
+            }
+
+            .filtros {
+                padding: 20px;
+            }
+
+            .campos {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .campo {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .gerar {
+                width: 100%;
+            }
+
+            .relatorio-topo {
+                padding: 20px;
+            }
+
+            th,
+            td {
+                padding: 14px 12px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Relatório de Comissões</h1>
-        <p>Consulte os fechamentos quinzenais dos funcionários.</p>
 
-        
-
-<form method="POST" style="margin: 20px 0;">
-
-    <label for="mes">Mês do fechamento:</label>
-    <input
-        type="month"
-        id="mes"
-        name="mes"
-        value="{{ mes_atual }}"
-        required
-    >
-
-    <label for="quinzena">Quinzena:</label>
-    <select id="quinzena" name="quinzena" required>
-        <option value="1">1ª quinzena (dia 1 ao 15)</option>
-        <option value="2">2ª quinzena (dia 16 ao último dia)</option>
-    </select>
-
-    <button type="submit" style="
-        padding: 10px 16px;
-        background: #053b2b;
-        color: white;
-        border: none;
-        border-radius: 7px;
-        cursor: pointer;
-    ">
-        Gerar fechamento
-    </button>
-
-</form>
+    <header class="cabecalho">
+        <a href="/" class="link-logo">
+            <img
+                src="{{ url_for('static', filename='logo.png') }}"
+                alt="Logo Âmbar"
+                class="logo"
+            >
+        </a>
+    </header>
 
 
-{% if gerado %}
-    <p style="color: #087443;">
-        Fechamento gerado com sucesso!
-    </p>
-{% endif %}
+    <main class="container">
 
-{% if sem_comissoes %}
-    <p>
-        Não existem comissões pendentes de fechamento nesse período.
-    </p>
-{% endif %}
+        <section class="introducao">
+            <div class="detalhe">Gestão financeira</div>
 
+            <h1>Relatório de Comissões</h1>
 
-        <div class="tabela-container">
+            <p>
+                Acompanhe os fechamentos quinzenais e os pagamentos
+                das comissões da nossa equipe.
+            </p>
+
+            <div class="linha-dourada"></div>
+        </section>
+
+        <section class="filtros">
+
+            <h2>Gerar fechamento</h2>
+
+            <p>
+                Selecione o período desejado para consultar
+                e gerar o fechamento das comissões.
+            </p>
+
+            <form method="POST">
+
+                <div class="campos">
+
+                    <div class="campo">
+                        <label for="mes">Mês do fechamento</label>
+
+                        <input
+                            type="month"
+                            id="mes"
+                            name="mes"
+                            value="{{ mes_atual }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="quinzena">Período</label>
+
+                        <select id="quinzena" name="quinzena" required>
+                            <option value="1">1ª quinzena · Dias 1 a 15</option>
+                            <option value="2">2ª quinzena · Dia 16 ao fim do mês</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="gerar">
+                        Gerar fechamento
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        {% if gerado %}
+            <div class="mensagem sucesso">
+                ✓ Fechamento gerado com sucesso!
+            </div>
+        {% endif %}
+
+        {% if sem_comissoes %}
+            <div class="mensagem informacao">
+                Não existem comissões pendentes de fechamento nesse período.
+            </div>
+        {% endif %}
+
+        <section class="relatorio">
+
+            <div class="relatorio-topo">
+                <div>
+                    <h2>Fechamentos registrados</h2>
+                    <p>Valores e situação dos pagamentos por funcionário.</p>
+                </div>
+
+                <div class="ornamento">✧</div>
+            </div>
+
             {% if fechamentos %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Funcionário</th>
-                            <th>Início</th>
-                            <th>Fim</th>
-                            <th>Valor a pagar</th>
-                            <th>Status</th>
-                            <th>Data do pagamento</th>
-                        </tr>
-                    </thead>
 
-                    <tbody>
-                        {% for fechamento in fechamentos %}
+                <div class="tabela-container">
+
+                    <table>
+                        <thead>
                             <tr>
-                                <td>{{ fechamento[1] }}</td>
-                                <td>{{ fechamento[2].strftime("%d/%m/%Y") }}</td>
-                                <td>{{ fechamento[3].strftime("%d/%m/%Y") }}</td>
-                                <td>R$ {{ "%.2f"|format(fechamento[4]) }}</td>
-                                <td>
-                                    {% if fechamento[5] == "PAGO" %}
-                                        <span class="pago">Pago</span>
-                                    {% else %}
-                                        <span class="pendente">Pendente</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if fechamento[6] %}
-                                        {{ fechamento[6].strftime("%d/%m/%Y %H:%M") }}
-                                    {% else %}
-                                        —
-                                    {% endif %}
-                                </td>
+                                <th>Funcionário</th>
+                                <th>Início</th>
+                                <th>Fim</th>
+                                <th>Valor a pagar</th>
+                                <th>Status</th>
+                                <th>Data do pagamento</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p class="vazio">
-                    Nenhum fechamento quinzenal foi registrado ainda.
-                </p>
-            {% endif %}
-        </div>
+                        </thead>
 
-        <a href="/painel" class="voltar">Voltar ao painel</a>
-    </div>
+                        <tbody>
+                            {% for fechamento in fechamentos %}
+                                <tr>
+                                    <td class="nome-funcionario">
+                                        {{ fechamento[1] }}
+                                    </td>
+
+                                    <td>
+                                        {{ fechamento[2].strftime("%d/%m/%Y") }}
+                                    </td>
+
+                                    <td>
+                                        {{ fechamento[3].strftime("%d/%m/%Y") }}
+                                    </td>
+
+                                    <td class="valor">
+                                        R$ {{ "%.2f"|format(fechamento[4]) }}
+                                    </td>
+
+                                    <td>
+                                        {% if fechamento[5] == "PAGO" %}
+                                            <span class="status pago">Pago</span>
+                                        {% else %}
+                                            <span class="status pendente">Pendente</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if fechamento[6] %}
+                                            {{ fechamento[6].strftime("%d/%m/%Y %H:%M") }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="vazio">
+                    <span class="vazio-simbolo">✧</span>
+                    Nenhum fechamento quinzenal foi registrado ainda.
+                    <br>
+                    Selecione um período acima para gerar um fechamento.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        <a href="/painel" class="voltar">
+            ← Voltar ao painel
+        </a>
+
+    </main>
+
+    <footer>
+        <span>ÂMBAR</span> · Ilumine quem você é, sem medo de brilhar.
+    </footer>
+
 </body>
 </html>

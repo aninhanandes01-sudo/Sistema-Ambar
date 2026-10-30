@@ -1,104 +1,233 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Agenda - Âmbar</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #075040;
+            margin: 0;
+            padding: 45px 20px;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #003b39, #01524e, #7bb6a9);
             color: white;
-            font-family: Arial;
-            padding: 40px;
         }
 
         .container {
-            max-width: 600px;
+            max-width: 650px;
             margin: auto;
         }
 
-        form {
-            background-color: #053b2b;
-            padding: 25px;
-            border-radius: 10px;
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .linha-dourada {
+            width: 55px;
+            height: 3px;
+            background-color: #d99a2b;
+            border-radius: 5px;
+            margin: 18px auto;
+        }
+
+        .cabecalho p {
+            color: #e1eee9;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .formulario {
+            background-color: #f8f7f1;
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(217, 154, 43, 0.35);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .formulario h2 {
+            color: #003b39;
+            font-size: 21px;
+            margin: 0 0 22px;
         }
 
         label {
             display: block;
-            margin-top: 15px;
+            margin-top: 18px;
+            margin-bottom: 7px;
+            color: #315c53;
+            font-size: 14px;
+            font-weight: bold;
         }
 
         input {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            box-sizing: border-box;
+            padding: 13px;
+            border: 1px solid #d8ded8;
+            border-radius: 8px;
+            background-color: white;
+            color: #244b43;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #b88a35;
+            box-shadow: 0 0 0 3px rgba(217, 154, 43, 0.12);
         }
 
         button {
-            margin-top: 20px;
-            padding: 12px 20px;
-            background-color: goldenrod;
+            width: 100%;
+            margin-top: 28px;
+            padding: 14px;
+            background: linear-gradient(135deg, #004f4b, #00645c);
+            color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #003b39;
+            transform: translateY(-1px);
+        }
+
+        .secao-horarios {
+            margin-top: 35px;
+        }
+
+        .secao-horarios h2 {
+            font-size: 21px;
+            margin-bottom: 18px;
+            font-weight: 600;
         }
 
         .horario {
-            background-color: #053b2b;
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 8px;
+            background-color: #f8f7f1;
+            color: #315c53;
+            margin-top: 13px;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #d99a2b;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.10);
+            line-height: 1.8;
+            font-size: 14px;
         }
 
-        a {
-            color: white;
+        .horario strong {
+            color: #003b39;
+        }
+
+        .sem-horarios {
+            background: rgba(248, 247, 241, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 18px;
+            border-radius: 10px;
+            color: #edf5f1;
+            font-size: 14px;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-top: 30px;
+            color: #fff3d5;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .voltar:hover {
+            color: #f0c36a;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 30px 16px;
+            }
+
+            h1 {
+                font-size: 27px;
+            }
+
+            .formulario {
+                padding: 23px 20px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <h1>Minha Agenda</h1>
-
-    <p>Cadastre os dias e horários em que você estará disponível.</p>
-
-    <form method="POST">
-
-        <label>Data:</label>
-        <input type="date" name="data" required>
-
-        <label>Horário de início:</label>
-        <input type="time" name="horario_inicio" required>
-
-        <label>Horário de término:</label>
-        <input type="time" name="horario_fim" required>
-
-        <button type="submit">Adicionar horário</button>
-
-    </form>
-
-    <h2>Meus horários</h2>
-
-    {% for horario in horarios %}
-
-        <div class="horario">
-            <strong>Data:</strong> {{ horario[1] }}<br>
-            <strong>Horário:</strong> {{ horario[2] }} às {{ horario[3] }}
+        <div class="cabecalho">
+            <h1>Minha Agenda</h1>
+            <div class="linha-dourada"></div>
+            <p>Organize seus horários e informe os dias em que estará disponível para atendimento.</p>
         </div>
 
-    {% endfor %}
+        <form method="POST" class="formulario">
 
-    <br>
+            <h2>Adicionar disponibilidade</h2>
 
-    <a href="/painel" class="voltar">
-            ← Voltar para o painel
-        </a>
-</div>
+            <label>Data</label>
+            <input type="date" name="data" required>
+
+            <label>Horário de início</label>
+            <input type="time" name="horario_inicio" required>
+
+            <label>Horário de término</label>
+            <input type="time" name="horario_fim" required>
+
+            <button type="submit">Adicionar horário</button>
+
+        </form>
+
+        <div class="secao-horarios">
+
+            <h2>Meus horários</h2>
+
+            {% for horario in horarios %}
+
+                <div class="horario">
+                    <strong>Data:</strong> {{ horario[1] }}<br>
+                    <strong>Horário:</strong> {{ horario[2] }} às {{ horario[3] }}
+                </div>
+
+            {% else %}
+
+                <div class="sem-horarios">
+                    Você ainda não cadastrou nenhum horário de disponibilidade.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        <a href="/painel" class="voltar">← Voltar para o painel</a>
+
+    </div>
 
 </body>
 

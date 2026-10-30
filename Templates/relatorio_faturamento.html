@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório de Faturamento | Sistema Âmbar</title>
+    <title>Relatório de Faturamento | Âmbar</title>
 
     <style>
         * {
@@ -13,152 +13,511 @@
 
         body {
             margin: 0;
-            padding: 30px;
+            min-height: 100vh;
             font-family: Arial, sans-serif;
-            background: #f4f7f5;
-            color: #263b34;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: auto;
+            background: #f5f5ef;
+            color: #293b31;
         }
 
         header {
             background: #053b2b;
             color: white;
-            padding: 25px;
-            border-bottom: 4px solid #d99a2b;
-            border-radius: 10px;
+            padding: 20px 6%;
+            border-bottom: 3px solid #d99a2b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            color: #f0c879;
+            font-size: 27px;
+            font-weight: bold;
+            letter-spacing: 4px;
+        }
+
+        .sublogo {
+            color: #e1e8df;
+            font-size: 10px;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .voltar-topo {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .voltar-topo:hover {
+            color: #f0c879;
+        }
+
+        .cabecalho {
+            width: calc(100% + 40px);
+            min-height: 80px;
+            background: #053b2b;
+            display: flex;
+            align-items: center;
+            padding: 10px 40px;
+            margin: 0 -20px 40px;
+            border-bottom: 1px solid rgba(217, 154, 43, 0.5);
+        }
+
+        .link-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 90px;
+            height: auto;
+            display: block;
+        }
+
+
+        .introducao {
+            margin-bottom: 30px;
+        }
+
+        .detalhe {
+            color: #a87520;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #06483b;
+            font-family: Georgia, Times, serif;
+            font-size: 34px;
+            font-weight: normal;
+            margin: 0 0 12px;
+        }
+
+        .introducao p {
+            color: #737d72;
+            font-size: 14px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .linha-dourada {
+            width: 48px;
+            height: 2px;
+            background: #d99a2b;
+            margin-top: 20px;
+        }
+
+        .filtros,
+        .resumo,
+        .tabela {
+            background: white;
+            border: 1px solid #e6e5d9;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(25, 57, 39, 0.04);
             margin-bottom: 25px;
         }
 
-        header h1 {
-            margin: 0 0 8px;
+        .filtros {
+            padding: 25px;
         }
 
-        header p {
-            margin: 0;
-            color: #dce9e1;
+        .titulo-secao {
+            color: #06483b;
+            font-size: 18px;
+            margin: 0 0 7px;
         }
 
-        .filtros, .resumo, .tabela {
-            background: white;
-            padding: 22px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px #0000000d;
+        .descricao-secao {
+            color: #858c80;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0 0 22px;
         }
 
         .filtros form {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            align-items: end;
+            gap: 18px;
+            align-items: flex-end;
         }
 
         .campo {
             display: flex;
             flex-direction: column;
-            gap: 7px;
+            gap: 9px;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        label {
+            color: #3e5747;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         input {
-            padding: 10px;
-            border: 1px solid #cbd5cf;
-            border-radius: 6px;
+            width: 100%;
+            min-height: 43px;
+            padding: 11px 12px;
+            border: 1px solid #d8dfd6;
+            border-radius: 7px;
+            background: #fbfcf8;
+            color: #304538;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
         }
 
-        button, .voltar {
-            display: inline-block;
-            padding: 11px 18px;
-            background: #075040;
-            color: white;
-            border: none;
-            border-radius: 6px;
+        input:focus {
+            outline: none;
+            border-color: #0b6651;
+            box-shadow: 0 0 0 2px rgba(11, 102, 81, 0.1);
+        }
+
+        .botoes-filtro {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        button,
+        .limpar,
+        .voltar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 43px;
+            padding: 11px 19px;
+            border-radius: 7px;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            font-weight: bold;
             text-decoration: none;
             cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button {
+            background: #075040;
+            color: white;
+            border: 1px solid #075040;
+        }
+
+        button:hover {
+            background: #003b32;
         }
 
         .limpar {
             color: #075040;
-            text-decoration: none;
-            padding: 10px;
+            background: white;
+            border: 1px solid #d8dfd6;
+        }
+
+        .limpar:hover {
+            background: #edf3eb;
+        }
+
+        .resumo {
+            padding: 25px;
+        }
+
+        .cabecalho-resumo {
+            margin-bottom: 22px;
+        }
+
+        .cabecalho-resumo .titulo-secao {
+            margin-bottom: 7px;
         }
 
         .cartoes {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
         }
 
         .cartao {
-            background: #edf5f0;
-            padding: 20px;
-            border-left: 4px solid #d99a2b;
-            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            background: #edf3eb;
+            padding: 25px;
+            border: 1px solid #e0e9dd;
+            border-radius: 10px;
         }
 
-        .cartao p {
-            margin: 0 0 10px;
-            color: #52665b;
+        .cartao::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #d99a2b;
+        }
+
+        .cartao-contagem {
+            background: #f9f7ef;
+            border-color: #ebe5d5;
+        }
+
+        .rotulo-cartao {
+            color: #637568;
+            font-size: 12px;
+            margin-bottom: 13px;
         }
 
         .valor {
-            font-size: 28px;
-            font-weight: bold;
             color: #075040;
+            font-size: clamp(23px, 3vw, 31px);
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .cartao-contagem .valor {
+            color: #a87520;
+        }
+
+        .legenda-cartao {
+            color: #858c80;
+            font-size: 11px;
+            margin-top: 10px;
         }
 
         .tabela {
+            overflow: hidden;
+        }
+
+        .cabecalho-tabela {
+            padding: 23px 25px;
+            border-bottom: 1px solid #e9e9e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .cabecalho-tabela .titulo-secao {
+            margin-bottom: 6px;
+        }
+
+        .cabecalho-tabela p {
+            color: #858c80;
+            font-size: 12px;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .ornamento {
+            color: #c18b2a;
+            font-size: 25px;
+        }
+
+        .tabela-container {
+            width: 100%;
             overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 600px;
+            min-width: 650px;
         }
 
-        th, td {
-            padding: 13px;
+        th,
+        td {
+            padding: 16px;
             text-align: left;
-            border-bottom: 1px solid #e4e9e5;
+            border-bottom: 1px solid #eeeee7;
+            font-size: 12px;
         }
 
         th {
-            background: #edf5f0;
+            background: #f0f4ed;
+            color: #385744;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            color: #536156;
+        }
+
+        tbody tr:hover {
+            background: #fafbf7;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .id-agendamento {
+            color: #a87520;
+            font-weight: bold;
+        }
+
+        .cliente {
+            color: #174b38;
+            font-weight: bold;
+        }
+
+        .valor-tabela {
             color: #075040;
+            font-weight: bold;
+            white-space: nowrap;
         }
 
         .vazio {
+            padding: 42px 20px;
             text-align: center;
-            padding: 25px;
-            color: #68766e;
+            color: #7d887d;
+            font-size: 13px;
+            line-height: 1.8;
         }
 
-        @media (max-width: 600px) {
-            body {
-                padding: 15px;
+        .vazio-simbolo {
+            display: block;
+            color: #c18b2a;
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .voltar {
+            background: #075040;
+            color: white;
+            border: 1px solid #075040;
+        }
+
+        .voltar:hover {
+            background: #003b32;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px 15px;
+            color: #8a9287;
+            font-size: 11px;
+        }
+
+        footer span {
+            color: #a87520;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 650px) {
+            header {
+                padding: 18px 20px;
+            }
+
+            .logo {
+                font-size: 23px;
+            }
+
+            .voltar-topo {
+                font-size: 11px;
+            }
+
+            .container {
+                margin: 30px auto;
+                padding: 0 15px;
+            }
+
+            h1 {
+                font-size: 29px;
+            }
+
+            .filtros,
+            .resumo {
+                padding: 20px;
+            }
+
+            .filtros form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .campo {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .botoes-filtro {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+            }
+
+            .botoes-filtro button,
+            .botoes-filtro .limpar {
+                width: 100%;
+            }
+
+            .cartoes {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .cartao {
+                padding: 22px;
+            }
+
+            .cabecalho-tabela {
+                padding: 20px;
+            }
+
+            th,
+            td {
+                padding: 14px 12px;
             }
         }
     </style>
 </head>
 
 <body>
+
+    <header class="cabecalho">
+        <a href="/" class="link-logo">
+            <img
+                src="{{ url_for('static', filename='logo.png') }}"
+                alt="Logo Âmbar"
+                class="logo"
+            >
+        </a>
+    </header>
+
     <main class="container">
 
-        <header>
+        <section class="introducao">
+            <div class="detalhe">Gestão financeira</div>
+
             <h1>Relatório de Faturamento</h1>
-            <p>Sistema Âmbar — Controle financeiro do salão</p>
-        </header>
+
+            <p>
+                Acompanhe os pagamentos registrados e consulte
+                o faturamento do salão por período.
+            </p>
+
+            <div class="linha-dourada"></div>
+        </section>
 
         <section class="filtros">
-            <h2>Filtrar por período</h2>
+
+            <h2 class="titulo-secao">Consultar período</h2>
+
+            <p class="descricao-secao">
+                Escolha as datas para visualizar os pagamentos
+                correspondentes ao período selecionado.
+            </p>
 
             <form method="GET" action="/relatorio-faturamento">
+
                 <div class="campo">
                     <label for="data_inicio">Data inicial</label>
+
                     <input
                         type="date"
                         id="data_inicio"
@@ -169,6 +528,7 @@
 
                 <div class="campo">
                     <label for="data_fim">Data final</label>
+
                     <input
                         type="date"
                         id="data_fim"
@@ -177,74 +537,145 @@
                     >
                 </div>
 
-                <button type="submit">Consultar</button>
+                <div class="botoes-filtro">
+                    <button type="submit">
+                        Consultar relatório
+                    </button>
 
-                <a class="limpar" href="/relatorio-faturamento">
-                    Limpar filtros
-                </a>
+                    <a class="limpar" href="/relatorio-faturamento">
+                        Limpar filtros
+                    </a>
+                </div>
+
             </form>
+
         </section>
 
         <section class="resumo">
-            <h2>Resumo financeiro</h2>
+
+            <div class="cabecalho-resumo">
+                <h2 class="titulo-secao">Resumo financeiro</h2>
+
+                <p class="descricao-secao">
+                    Visão geral dos pagamentos encontrados no período.
+                </p>
+            </div>
 
             <div class="cartoes">
+
                 <div class="cartao">
-                    <p>Total recebido</p>
+                    <div class="rotulo-cartao">Total recebido</div>
+
                     <div class="valor">
                         R$ {{ "%.2f"|format(faturamento or 0) }}
                     </div>
+
+                    <div class="legenda-cartao">
+                        Faturamento dos pagamentos consultados
+                    </div>
                 </div>
 
-                <div class="cartao">
-                    <p>Pagamentos registrados</p>
+                <div class="cartao cartao-contagem">
+                    <div class="rotulo-cartao">Pagamentos registrados</div>
+
                     <div class="valor">
                         {{ quantidade_pagamentos }}
                     </div>
+
+                    <div class="legenda-cartao">
+                        Quantidade de pagamentos encontrados
+                    </div>
                 </div>
+
             </div>
+
         </section>
 
         <section class="tabela">
-            <h2>Detalhamento dos pagamentos</h2>
+
+            <div class="cabecalho-tabela">
+                <div>
+                    <h2 class="titulo-secao">
+                        Detalhamento dos pagamentos
+                    </h2>
+
+                    <p>
+                        Consulte os agendamentos e os valores recebidos.
+                    </p>
+                </div>
+
+                <div class="ornamento">✧</div>
+            </div>
 
             {% if pagamentos %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Agendamento</th>
-                            <th>Data do pagamento</th>
-                            <th>Cliente</th>
-                            <th>Funcionária</th>
-                            <th>Valor</th>
-                        </tr>
-                    </thead>
 
-                    <tbody>
-                        {% for pagamento in pagamentos %}
+                <div class="tabela-container">
+
+                    <table>
+                        <thead>
                             <tr>
-                                <td>#{{ pagamento[0] }}</td>
-                                <td>
-                                    {{ pagamento[1].strftime("%d/%m/%Y %H:%M") }}
-                                </td>
-                                <td>{{ pagamento[2] }}</td>
-                                <td>{{ pagamento[3] }}</td>
-                                <td>
-                                    R$ {{ "%.2f"|format(pagamento[4] or 0) }}
-                                </td>
+                                <th>Agendamento</th>
+                                <th>Data do pagamento</th>
+                                <th>Cliente</th>
+                                <th>Funcionária</th>
+                                <th>Valor</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+
+                        <tbody>
+                            {% for pagamento in pagamentos %}
+                                <tr>
+                                    <td class="id-agendamento">
+                                        #{{ pagamento[0] }}
+                                    </td>
+
+                                    <td>
+                                        {{ pagamento[1].strftime("%d/%m/%Y %H:%M") }}
+                                    </td>
+
+                                    <td class="cliente">
+                                        {{ pagamento[2] }}
+                                    </td>
+
+                                    <td>
+                                        {{ pagamento[3] }}
+                                    </td>
+
+                                    <td class="valor-tabela">
+                                        R$ {{ "%.2f"|format(pagamento[4] or 0) }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+
             {% else %}
-                <p class="vazio">
+
+                <div class="vazio">
+                    <span class="vazio-simbolo">✧</span>
+
                     Nenhum pagamento encontrado nesse período.
-                </p>
+
+                    <br>
+
+                    Tente selecionar outras datas para consultar o faturamento.
+                </div>
+
             {% endif %}
+
         </section>
 
-        <a class="voltar" href="/painel">Voltar ao painel</a>
+        <a class="voltar" href="/painel">
+            ← Voltar ao painel
+        </a>
 
     </main>
+
+    <footer>
+        <span>ÂMBAR</span> · Ilumine quem você é, sem medo de brilhar.
+    </footer>
+
 </body>
 </html>

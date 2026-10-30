@@ -113,6 +113,23 @@ VALUES
     60.00
 );
 
+CREATE TABLE fechamento_comissao (
+    id_fechamento SERIAL PRIMARY KEY,
+    id_funcionario INTEGER NOT NULL
+        REFERENCES funcionario(id_funcionario),
+    data_inicio DATE NOT NULL,
+    data_fim DATE NOT NULL,
+    valor_total NUMERIC(10, 2) NOT NULL DEFAULT 0,
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDENTE',
+    data_pagamento TIMESTAMP,
+    CONSTRAINT periodo_valido
+        CHECK (data_fim >= data_inicio),
+    CONSTRAINT status_fechamento_valido
+        CHECK (status IN ('PENDENTE', 'PAGO')),
+    CONSTRAINT fechamento_unico
+        UNIQUE (id_funcionario, data_inicio, data_fim)
+);
+
 
 CREATE TABLE comissao (
     id_comissao SERIAL PRIMARY KEY,

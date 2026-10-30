@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificações - Sistema Âmbar</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #54a882;
+            color: #003b39;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .cabecalho {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        .cabecalho p {
+            margin: 0;
+        }
+
+        .voltar {
+            color: #003b39;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .notificacao {
+            padding: 22px;
+            margin-bottom: 15px;
+            border: 1px solid #d99a2b;
+            border-radius: 12px;
+            background: white;
+        }
+
+        .notificacao.nao-lida {
+            border-left: 5px solid #d99a2b;
+            background: #fffaf0;
+        }
+
+        .notificacao p {
+            line-height: 1.6;
+        }
+
+        .data {
+            color: #52665e;
+            font-size: 13px;
+        }
+
+        .status {
+            color: #95620c;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .botao {
+            display: inline-block;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 20px;
+            background: #003b39;
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .botao:hover {
+            background: #075040;
+        }
+
+        .vazio {
+            padding: 35px 20px;
+            border-radius: 12px;
+            background: white;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 25px 15px;
+            }
+
+            .cabecalho {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+
+        <header class="cabecalho">
+            <div>
+                <h1>Notificações</h1>
+                <p>
+                    Você tem {{ nao_lidas }} notificação(ões) não lida(s).
+                </p>
+            </div>
+
+            <a href="/painel" class="voltar">Voltar ao painel</a>
+        </header>
+
+        {% if notificacoes %}
+
+            {% for notificacao in notificacoes %}
+
+                <article class="notificacao {% if not notificacao[4] %}nao-lida{% endif %}">
+
+                    {% if not notificacao[4] %}
+                        <span class="status">Não lida</span>
+                    {% else %}
+                        <span class="data">Lida</span>
+                    {% endif %}
+
+                    <p>{{ notificacao[2] }}</p>
+
+                    <p class="data">
+                        {{ notificacao[5].strftime("%d/%m/%Y às %H:%M") }}
+                    </p>
+
+                    {% if not notificacao[4] %}
+                        <form
+                            action="{{ url_for('marcar_notificacao_lida', id_notificacao=notificacao[0]) }}"
+                            method="POST"
+                        >
+                            <button type="submit" class="botao">
+                                Marcar como lida
+                            </button>
+                        </form>
+                    {% endif %}
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="vazio">
+                <h2>Tudo tranquilo por aqui!</h2>
+                <p>Você ainda não tem notificações.</p>
+            </div>
+
+        {% endif %}
+
+    </main>
+</body>
+</html>

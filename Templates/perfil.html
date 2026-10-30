@@ -1,102 +1,423 @@
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
-    <title>Meu Perfil - Âmbar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil | Âmbar</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
 
         body {
-            background: #004f4b;
-            color: white;
-            font-family: Arial;
             margin: 0;
-            padding: 30px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #003b39, #056d5f, #004f4b);
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 0 18px 30px;
+        }
+
+        .topo {
+            width: calc(100% + 36px);
+            min-height: 80px;
+            background: #053b2b;
+            display: flex;
+            align-items: center;
+            padding: 10px 40px;
+            margin: 0 -18px;
+            border-bottom: 1px solid rgba(217, 154, 43, 0.5);
+        }
+
+        .link-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 90px;
+            height: auto;
+            display: block;
         }
 
         .container {
-            max-width: 500px;
-            margin: 50px auto;
+            width: 100%;
+            max-width: 530px;
+            margin: 45px auto 0;
+        }
+
+        .introducao {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .detalhe {
+            color: #e5b75c;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
         }
 
         h1 {
-            text-align: center;
-            margin-bottom: 30px;
+            font-family: Georgia, Times, serif;
+            font-weight: normal;
+            font-size: 34px;
+            margin: 0 0 12px;
+        }
+
+        .introducao p {
+            color: #d3e0d8;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
         }
 
         .perfil {
-            background: white;
-            color: #333;
-            padding: 30px;
-            border-radius: 15px;
+            background: #fffefa;
+            color: #34463b;
+            padding: 32px;
+            border-radius: 14px;
+            border: 1px solid #d99a2b;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .cabecalho-perfil {
+            text-align: center;
+            padding-bottom: 25px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e9e6da;
+        }
+
+        .avatar {
+            width: 75px;
+            height: 75px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: #e9f0e8;
+            border: 1px solid #d9bd7d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #075040;
+            font-family: Georgia, Times, serif;
+            font-size: 35px;
+        }
+
+        .cabecalho-perfil h2 {
+            margin: 0 0 7px;
+            font-size: 19px;
+            color: #06483b;
+            overflow-wrap: anywhere;
+        }
+
+        .cabecalho-perfil p {
+            margin: 0;
+            color: #858c80;
+            font-size: 12px;
+        }
+
+        .subtitulo {
+            color: #075040;
+            font-size: 14px;
+            margin: 0 0 18px;
         }
 
         .campo {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
-        .campo strong {
+        .campo label {
             display: block;
-            color: #004f4b;
-            margin-bottom: 5px;
+            color: #718073;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .campo input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d9dfd6;
+            border-radius: 7px;
+            font-size: 14px;
+            color: #263c32;
+            background: #fff;
+            outline: none;
+        }
+
+        .campo input:focus {
+            border-color: #075040;
+            box-shadow: 0 0 0 2px rgba(7, 80, 64, 0.1);
+        }
+
+        .separador {
+            border: none;
+            border-top: 1px solid #e9e6da;
+            margin: 25px 0;
+        }
+
+        .aviso {
+            color: #858c80;
+            font-size: 12px;
+            line-height: 1.5;
+            margin: -7px 0 18px;
+        }
+
+        .mensagem {
+            padding: 12px;
+            border-radius: 7px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .sucesso {
+            background: #e5f3e8;
+            color: #17613b;
+        }
+
+        .erro {
+            background: #fbe8e5;
+            color: #a33327;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .salvar {
+            flex: 1;
+            padding: 13px;
+            background: #075040;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .salvar:hover {
+            background: #003b39;
         }
 
         .voltar {
-            display: block;
-            width: fit-content;
-            margin: 25px auto 0;
-            padding: 10px 20px;
-            background: #d4af37;
-            color: #004f4b;
+            flex: 1;
+            padding: 13px;
+            background: #d99a2b;
+            color: #003b39;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 7px;
+            font-size: 13px;
             font-weight: bold;
+            text-align: center;
         }
 
+        footer {
+            text-align: center;
+            margin-top: 35px;
+            color: #d3e0d8;
+            font-size: 11px;
+        }
+
+        footer span {
+            color: #e5b75c;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0 15px 22px;
+            }
+
+            .topo {
+                width: calc(100% + 30px);
+                min-height: 70px;
+                padding: 10px 20px;
+                margin: 0 -15px;
+            }
+
+            .logo {
+                width: 75px;
+            }
+
+            .container {
+                margin-top: 35px;
+            }
+
+            h1 {
+                font-size: 29px;
+            }
+
+            .perfil {
+                padding: 24px 20px;
+            }
+
+            .botoes {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
+    <header class="topo">
+        <a href="/" class="link-logo">
+            <img src="{{ url_for('static', filename='logo.png') }}"
+                 alt="Logo Âmbar" class="logo">
+        </a>
+    </header>
 
-        <h1>Meu Perfil</h1>
+    <main class="container">
 
-        <div class="perfil">
+        <section class="introducao">
+            <div class="detalhe">Seu espaço</div>
+            <h1>Meu Perfil</h1>
+            <p>Atualize suas informações pessoais cadastradas no Âmbar.</p>
+        </section>
 
-            <div class="campo">
-                <strong>Nome</strong>
-                {{ usuario[0] }}
+        <section class="perfil">
+
+            <div class="cabecalho-perfil">
+                <div class="avatar">✧</div>
+
+                <h2>{{ usuario[0] }}</h2>
+
+                <p>
+                    {% if session["tipo_usuario"] == "funcionario" %}
+                        Perfil de funcionário
+                    {% else %}
+                        Perfil de cliente
+                    {% endif %}
+                </p>
             </div>
 
-            <div class="campo">
-                <strong>E-mail</strong>
-                {{ usuario[1] }}
-            </div>
+            {% with mensagens = get_flashed_messages(with_categories=true) %}
+                {% for categoria, mensagem in mensagens %}
+                    <div class="mensagem {{ categoria }}">
+                        {{ mensagem }}
+                    </div>
+                {% endfor %}
+            {% endwith %}
 
-            <div class="campo">
-                <strong>Telefone</strong>
-                {{ usuario[2] }}
-            </div>
+            <form method="POST">
 
-            {% if session["tipo_usuario"] == "funcionario" %}
+                <h3 class="subtitulo">Informações pessoais</h3>
 
                 <div class="campo">
-                    <strong>Cargo</strong>
-                    {{ usuario[3] }}
+                    <label for="nome">Nome completo</label>
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        value="{{ usuario[0] }}"
+                        maxlength="100"
+                        required
+                    >
                 </div>
 
-            {% endif %}
+                <div class="campo">
+                    <label for="email">E-mail</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ usuario[1] }}"
+                        maxlength="150"
+                        required
+                    >
+                </div>
 
-        </div>
+                <div class="campo">
+                    <label for="telefone">Telefone</label>
+                    <input
+                        type="text"
+                        id="telefone"
+                        name="telefone"
+                        value="{{ usuario[2] or '' }}"
+                        maxlength="20"
+                    >
+                </div>
 
-        <a href="/painel" class="voltar">
-            Voltar ao painel
-        </a>
+                {% if session["tipo_usuario"] == "funcionario" %}
+                    <div class="campo">
+                        <label>Cargo</label>
+                        <input
+                            type="text"
+                            value="{{ usuario[3] or '' }}"
+                            disabled
+                        >
+                    </div>
+                {% endif %}
 
-    </div>
+                <hr class="separador">
+
+                <h3 class="subtitulo">Alterar senha</h3>
+
+                <p class="aviso">
+                    Se não quiser alterar sua senha, deixe os campos abaixo vazios.
+                </p>
+
+                <div class="campo">
+                    <label for="senha_atual">Senha atual</label>
+                    <input
+                        type="password"
+                        id="senha_atual"
+                        name="senha_atual"
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="nova_senha">Nova senha</label>
+                    <input
+                        type="password"
+                        id="nova_senha"
+                        name="nova_senha"
+                        autocomplete="new-password"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="confirmar_senha">Confirmar nova senha</label>
+                    <input
+                        type="password"
+                        id="confirmar_senha"
+                        name="confirmar_senha"
+                        autocomplete="new-password"
+                    >
+                </div>
+
+                <div class="botoes">
+                    <button type="submit" class="salvar">
+                        Salvar alterações
+                    </button>
+
+                    <a href="/painel" class="voltar">
+                        Voltar ao painel
+                    </a>
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <span>ÂMBAR</span> · Ilumine quem você é, sem medo de brilhar.
+    </footer>
 
 </body>
-
 </html>

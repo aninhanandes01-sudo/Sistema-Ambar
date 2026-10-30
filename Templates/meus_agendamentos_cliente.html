@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -10,9 +11,14 @@
 
     <style>
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            background: #075040;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #003b39, #01524e, #7bb6a9);
             color: white;
             font-family: Arial, sans-serif;
         }
@@ -21,92 +27,145 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px 40px;
-            background: #003b39;
+            padding: 20px 40px;
         }
 
         .logo {
-            width: 70px;
+            width: 85px;
         }
 
         .sair {
             color: white;
             text-decoration: none;
             border: 1px solid #d99a2b;
-            padding: 8px 16px;
+            padding: 9px 18px;
             border-radius: 20px;
+            transition: 0.3s;
+        }
+
+        .sair:hover {
+            background: #d99a2b;
+            color: #003b39;
         }
 
         .conteudo {
-            max-width: 700px;
-            margin: 45px auto;
+            max-width: 750px;
+            margin: 50px auto;
             padding: 20px;
         }
 
         h1 {
             text-align: center;
+            font-size: 30px;
+            margin-bottom: 35px;
         }
 
         h1 span {
-            color: #f0a52b;
+            color: #f0c36a;
         }
 
         .agendamento {
-            background: #003b39;
-            border: 1px solid #d99a2b;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
+            background: #f8f7f1;
+            color: #003b39;
+            border: 1px solid rgba(217, 154, 43, 0.45);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+            transition: 0.3s;
+        }
+
+        .agendamento:hover {
+            background: white;
+            border-color: #d99a2b;
+            transform: translateY(-3px);
+            box-shadow: 0 9px 20px rgba(0, 0, 0, 0.16);
         }
 
         .agendamento strong {
-            color: #f0a52b;
+            color: #004f4b;
         }
 
         .servicos {
             margin-top: 8px;
+            margin-left: 5px;
         }
 
         .servico {
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            color: #647572;
         }
 
         .valor {
-            color: #f0a52b;
+            color: #a77a25;
             font-size: 18px;
             font-weight: bold;
         }
 
         .pago {
-            color: #7ee787;
+            color: #27834d;
             font-weight: bold;
         }
 
         .pendente {
-            color: #ffcc66;
+            color: #b27b20;
             font-weight: bold;
         }
 
         .cancelar {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 18px;
-    background: #8b2e2e;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-}
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 18px;
+            background: #a94b4b;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .cancelar:hover {
+            background: #873737;
+        }
+
         .vazio {
             text-align: center;
-            color: #d9e8e6;
+            color: #e3eeeb;
+            padding: 25px;
         }
 
         .voltar {
             display: block;
             text-align: center;
-            margin-top: 30px;
+            margin-top: 35px;
             color: white;
             text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .voltar:hover {
+            color: #f0c36a;
+        }
+
+        @media (max-width: 650px) {
+
+            .topo {
+                padding: 15px 20px;
+            }
+
+            .conteudo {
+                margin: 30px auto;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .agendamento {
+                padding: 20px;
+            }
+
         }
 
     </style>
@@ -128,13 +187,11 @@
 
     </div>
 
-
     <div class="conteudo">
 
         <h1>
             Meus <span>agendamentos</span>
         </h1>
-
 
         {% for agendamento in agendamentos %}
 
@@ -202,14 +259,15 @@
 
                 {% if agendamento[6] != "CANCELADO" %}
 
-        <a href="/cancelar-agendamento/{{ agendamento[0] }}"
-        class="cancelar"
-        onclick="return confirm('Deseja realmente cancelar este agendamento?')">
-             Cancelar agendamento
-    </a>
+                    <a
+                        href="/cancelar-agendamento/{{ agendamento[0] }}"
+                        class="cancelar"
+                        onclick="return confirm('Deseja realmente cancelar este agendamento?')"
+                    >
+                        Cancelar agendamento
+                    </a>
 
-{% endif %}
-
+                {% endif %}
 
             </div>
 
@@ -221,7 +279,6 @@
 
         {% endfor %}
 
-
         <a href="/painel" class="voltar">
             ← Voltar para o painel
         </a>
@@ -231,4 +288,3 @@
 </body>
 
 </html>
-

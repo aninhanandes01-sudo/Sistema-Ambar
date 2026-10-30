@@ -1,18 +1,24 @@
-from flask import Flask, render_template, request, redirect, session
+
+from flask import Flask, render_template, request, redirect, session, flash
 import psycopg
 import re
+import os
+from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
 import calendar
 
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = "sistema-ambar-chave-secreta"
+app.secret_key = os.getenv("SECRET_KEY")
 
 
 def conectar_banco():
     return psycopg.connect(
-        "dbname=sistema_agendamento user=postgres password=919580 host=localhost"
+        os.getenv("DATABASE_URL")
     )
+
 
 
 
@@ -224,25 +230,170 @@ def index():
         servicos=servicos
     )
 
-@app.route("/perfil")
+
+@app.route("/perfil", methods=["GET", "POST"])
 def perfil():
 
     if "usuario_id" not in session:
         return redirect("/login")
 
+    tipo_usuario = session["tipo_usuario"]
+    usuario_id = session["usuario_id"]
+
     conn = conectar_banco()
+
+    if request.method == "POST":
+
+        nome = request.form.get("nome", "").strip()
+        email = request.form.get("email", "").strip()
+        telefone = request.form.get("telefone", "").strip()
+
+        senha_atual = request.form.get("senha_atual", "")
+        nova_senha = request.form.get("nova_senha", "")
+        confirmar_senha = request.form.get("confirmar_senha", "")
+
+        if not nome or not email:
+            flash("Nome e e-mail são obrigatórios.", "erro")
+
+        else:
+
+            with conn.cursor() as cursor:
+
+                if tipo_usuario == "cliente":
+
+                    tabela = "cliente"
+                    id_coluna = "id_cliente"
+
+                    cursor.execute("""
+                        SELECT id_cliente
+                        FROM cliente
+                        WHERE email = %s AND id_cliente != %s
+                    """, (email, usuario_id))
+
+                    email_cliente = cursor.fetchone()
+
+                    cursor.execute("""
+                        SELECT id_funcionario
+                        FROM funcionario
+                        WHERE email = %s
+                    """, (email,))
+
+                    email_funcionario = cursor.fetchone()
+
+                else:
+
+                    tabela = "funcionario"
+                    id_coluna = "id_funcionario"
+
+                    cursor.execute("""
+                        SELECT id_funcionario
+                        FROM funcionario
+                        WHERE email = %s AND id_funcionario != %s
+                    """, (email, usuario_id))
+
+                    email_funcionario = cursor.fetchone()
+
+                    cursor.execute("""
+                        SELECT id_cliente
+                        FROM cliente
+                        WHERE email = %s
+                    """, (email,))
+
+                    email_cliente = cursor.fetchone()
+
+                email_existente = email_cliente or email_funcionario
+
+                if email_existente:
+
+                    flash("Este e-mail já está cadastrado em outra conta.", "erro")
+
+                else:
+
+                    cursor.execute(
+                        f"""
+                        SELECT senha
+                        FROM {tabela}
+                        WHERE {id_coluna} = %s
+                        """,
+                        (usuario_id,)
+                    )
+
+                    resultado = cursor.fetchone()
+
+                    if not resultado:
+                        flash("Não foi possível localizar sua conta.", "erro")
+
+                    elif senha_atual or nova_senha or confirmar_senha:
+
+                        if not senha_atual or not nova_senha or not confirmar_senha:
+
+                            flash("Preencha os três campos de senha para alterá-la.", "erro")
+
+                        elif not resultado[0] or not check_password_hash(resultado[0], senha_atual):
+
+                            flash("A senha atual está incorreta.", "erro")
+
+                        elif nova_senha != confirmar_senha:
+
+                            flash("A confirmação da nova senha não corresponde.", "erro")
+
+                        elif len(nova_senha) < 8:
+
+                            flash("A nova senha deve ter pelo menos 8 caracteres.", "erro")
+
+                        else:
+
+                            senha_hash = generate_password_hash(nova_senha)
+
+                            cursor.execute(
+                                f"""
+                                UPDATE {tabela}
+                                SET nome = %s,
+                                    email = %s,
+                                    telefone = %s,
+                                    senha = %s
+                                WHERE {id_coluna} = %s
+                                """,
+                                (nome, email, telefone, senha_hash, usuario_id)
+                            )
+
+                            conn.commit()
+
+                            session["usuario_nome"] = nome
+
+                            flash("Seus dados e sua senha foram atualizados!", "sucesso")
+
+                    else:
+
+                        cursor.execute(
+                            f"""
+                            UPDATE {tabela}
+                            SET nome = %s,
+                                email = %s,
+                                telefone = %s
+                            WHERE {id_coluna} = %s
+                            """,
+                            (nome, email, telefone, usuario_id)
+                        )
+
+                        conn.commit()
+
+                        session["usuario_nome"] = nome
+
+                        flash("Seus dados foram atualizados com sucesso!", "sucesso")
+
+            conn.close()
+            return redirect("/perfil")
 
     with conn.cursor() as cursor:
 
-        if session["tipo_usuario"] == "cliente":
+        if tipo_usuario == "cliente":
 
             cursor.execute("""
                 SELECT nome, email, telefone
                 FROM cliente
                 WHERE id_cliente = %s
-            """, (session["usuario_id"],))
-
-            usuario = cursor.fetchone()
+            """, (usuario_id,))
 
         else:
 
@@ -250,9 +401,9 @@ def perfil():
                 SELECT nome, email, telefone, cargo
                 FROM funcionario
                 WHERE id_funcionario = %s
-            """, (session["usuario_id"],))
+            """, (usuario_id,))
 
-            usuario = cursor.fetchone()
+        usuario = cursor.fetchone()
 
     conn.close()
 
@@ -283,6 +434,10 @@ def servicos():
         servicos=servicos
     )
 
+
+
+
+
 @app.route("/agendamentos", methods=["GET", "POST"])
 def agendamentos():
 
@@ -293,20 +448,28 @@ def agendamentos():
 
     if request.method == "POST":
 
-        data = request.form["data"]
-        horario = request.form["horario"]
+        data = request.form.get("data")
+        horario = request.form.get("horario")
         id_cliente = session["usuario_id"]
-        id_funcionario = request.form["id_funcionario"]
+        id_funcionario = request.form.get("id_funcionario")
+        id_servicos = request.form.getlist("id_servicos")
 
-        
-        id_servicos = request.form.getlist("id_servico")
+        if not id_funcionario:
+            conn.close()
+            return "Erro: selecione um profissional."
 
+        if not data or not horario:
+            conn.close()
+            return "Erro: selecione uma data e um horário."
+
+        if not id_servicos:
+            conn.close()
+            return "Erro: selecione pelo menos um serviço."
 
         id_servicos = [int(id) for id in id_servicos]
 
         with conn.cursor() as cursor:
 
-            
             cursor.execute(
                 """
                 SELECT SUM(preco)
@@ -318,7 +481,6 @@ def agendamentos():
 
             valor_total = cursor.fetchone()[0]
 
-            
             cursor.execute(
                 """
                 INSERT INTO agendamento
@@ -338,9 +500,7 @@ def agendamentos():
 
             id_agendamento = cursor.fetchone()[0]
 
-            
             for id_servico in id_servicos:
-
                 cursor.execute(
                     """
                     INSERT INTO agendamento_servico
@@ -350,7 +510,25 @@ def agendamentos():
                     (id_agendamento, id_servico)
                 )
 
+            cursor.execute(
+                """
+                INSERT INTO notificacao
+                (id_cliente, id_agendamento, mensagem, tipo)
+                VALUES (%s, %s, %s, %s)
+                """,
+                (
+                    id_cliente,
+                    id_agendamento,
+                    f"Seu agendamento para o dia {data}, às {horario}, foi solicitado e está aguardando confirmação.",
+                    "AGENDAMENTO"
+                )
+            )
+
         conn.commit()
+
+        conn.close()
+
+        return redirect("/meus-agendamentos-cliente")
 
     with conn.cursor() as cursor:
 
@@ -405,6 +583,7 @@ def agendamentos():
         agendamentos=agendamentos
     )
 
+
 @app.route("/disponibilidade/<int:id_funcionario>")
 
 def buscar_disponibilidade(id_funcionario):
@@ -451,13 +630,13 @@ def horarios_disponiveis(id_funcionario, data):
     disponibilidades = cursor.fetchall()
 
     cursor.execute("""
-    SELECT horario
-    FROM agendamento
-    WHERE id_funcionario = %s
-      AND data = %s
-      AND status != 'CANCELADO'
-""", (id_funcionario, data))
-    
+        SELECT horario
+        FROM agendamento
+        WHERE id_funcionario = %s
+          AND data = %s
+          AND status != 'CANCELADO'
+    """, (id_funcionario, data))
+
     agendados = cursor.fetchall()
 
     cursor.close()
@@ -472,29 +651,28 @@ def horarios_disponiveis(id_funcionario, data):
 
     for inicio, fim in disponibilidades:
 
-        hora = inicio.hour
-        minuto = inicio.minute
+        hora_atual = inicio.hour
+        minuto_atual = inicio.minute
 
         while True:
 
-            horario = f"{hora:02d}:{minuto:02d}"
+            horario = f"{hora_atual:02d}:{minuto_atual:02d}"
 
             if horario not in horarios_agendados:
                 horarios.append(horario)
 
-            minuto += 60
+            minuto_atual += 60
 
-            if minuto >= 60:
-                hora += minuto // 60
-                minuto = minuto % 60
+            if minuto_atual >= 60:
+                hora_atual += 1
+                minuto_atual = 0
 
-            if hora > fim.hour or (
-                hora == fim.hour and minuto >= fim.minute
+            if hora_atual > fim.hour or (
+                hora_atual == fim.hour and minuto_atual >= fim.minute
             ):
                 break
 
     return horarios
-
 
 @app.route("/meus-agendamentos-cliente")
 def meus_agendamentos_cliente():
@@ -1139,6 +1317,81 @@ def relatorios():
         return redirect("/painel")
 
     return render_template("relatorios.html")
+
+
+@app.route("/notificacoes")
+def notificacoes():
+
+    if "usuario_id" not in session:
+        return redirect("/login")
+
+    if session.get("tipo_usuario") != "cliente":
+        return redirect("/painel")
+
+    id_cliente = session["usuario_id"]
+
+    conn = conectar_banco()
+
+    with conn.cursor() as cursor:
+        cursor.execute("""
+            SELECT
+                id_notificacao,
+                id_agendamento,
+                mensagem,
+                tipo,
+                lida,
+                data_criacao
+            FROM notificacao
+            WHERE id_cliente = %s
+            ORDER BY data_criacao DESC
+        """, (id_cliente,))
+
+        notificacoes = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM notificacao
+            WHERE id_cliente = %s
+              AND lida = FALSE
+        """, (id_cliente,))
+
+        nao_lidas = cursor.fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "notificacoes.html",
+        notificacoes=notificacoes,
+        nao_lidas=nao_lidas
+    )
+
+
+@app.route("/notificacao-lida/<int:id_notificacao>", methods=["POST"])
+def marcar_notificacao_lida(id_notificacao):
+
+    if "usuario_id" not in session:
+        return redirect("/login")
+
+    if session.get("tipo_usuario") != "cliente":
+        return redirect("/painel")
+
+    conn = conectar_banco()
+
+    with conn.cursor() as cursor:
+        cursor.execute("""
+            UPDATE notificacao
+            SET lida = TRUE
+            WHERE id_notificacao = %s
+              AND id_cliente = %s
+        """, (
+            id_notificacao,
+            session["usuario_id"]
+        ))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/notificacoes")
 
 
 @app.route("/login", methods=["GET", "POST"])
